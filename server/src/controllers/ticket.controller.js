@@ -58,21 +58,31 @@ export const bookTicket = async (req, res) => {
   }
 };
 
-
-/* ======================
-   USER TICKETS
-====================== */
 export const getUserTickets = async (req, res) => {
   try {
-    const tickets = await Ticket.find({ user: req.user.id }).populate(
-      "event",
-      "title date location"
-    );
+    const {status}=req.query;
+    const filter={user:req.user.id};
+
+    if(status) filter.status=status;
+
+    const tickets=await Ticket.find(filter)
+      .populate({
+        path:'event',
+        select:'title date time location image ticketPrice'
+      })
+      .populate({
+        path:'organizer',
+        select:'name email'
+      })
+      .sort({createdAt:-1});
+
 
     res.status(200).json({
       success: true,
+      count:tickets.length,
       tickets,
     });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

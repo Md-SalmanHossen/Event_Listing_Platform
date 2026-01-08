@@ -5,7 +5,8 @@ import protect from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
 /* USER */
-router.post("/book", protect, ticket.bookTicket);
+router.post('/book', protect, ticket.bookTicket);
+router.post ('/my', protect, ticket.getUserTickets);
 
 // router.get("/my", authMiddleware, getUserTickets);
 // router.put("/cancel/:id", authMiddleware, cancelTicket);
