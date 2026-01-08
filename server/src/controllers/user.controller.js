@@ -35,15 +35,22 @@ export const signup = async (req, res) => {
   }
 };
 
-/* ======================
-   LOGIN
-====================== */
-export const loginUser = async (req, res) => {
+
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select("+password");
-    if (!user || !(await user.comparePassword(password))) {
+    if(!user){
+      return res.status(401).json({
+        success:false,
+        message:'Invalid credentials'
+      })
+    }
+
+    const comparePass=await user.comparePassword(password);
+
+    if (!comparePass) {
       return res.status(401).json({
         success: false,
         message: "Invalid credentials",
@@ -54,7 +61,6 @@ export const loginUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      user,
       token,
     });
   } catch (error) {
@@ -62,17 +68,26 @@ export const loginUser = async (req, res) => {
   }
 };
 
-/* ======================
-   PROFILE
-====================== */
+
+
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+
+    const id=req.user.id;
+    const user = await User.findById(id).select('-password');
+
+    if(!user){
+      return res.status(404).json({
+        success:false,
+        message:'User not found'
+      })
+    }
 
     res.status(200).json({
       success: true,
-      user,
+      user
     });
+    
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

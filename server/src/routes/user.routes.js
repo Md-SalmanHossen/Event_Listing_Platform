@@ -1,14 +1,15 @@
 import express from "express";
 import *as user from '../controllers/user.controller.js'
-//import authMiddleware from "../middlewares/auth.middleware.js";
+import protect from "../middlewares/auth.middleware.js";
 //import upload from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
 
 router.post("/register", user.signup);
+router.post("/login", user.login);
 
-// router.post("/login", loginUser);
+router.get('/profile', protect , user.getProfile);
 
 // /* PROFILE */
 // router.get("/profile", authMiddleware, getProfile);
