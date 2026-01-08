@@ -8,6 +8,7 @@ const router = express.Router();
 // /* PUBLIC */
 // router.get("/", getAllEvents);
 // router.get("/:id", getSingleEvent);
+router.get('/',event.getAllEvents);
 
 /* ORGANIZER */
 router.post('/',protect, upload.single('image'), event.createEvent);
