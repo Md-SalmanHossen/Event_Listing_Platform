@@ -1,12 +1,10 @@
 import User from "../models/User.model.js";
-import generateToken from "../utils/generateToken.js";
+import generateToken from '../utils/generate_token.utils.js'
 
-/* ======================
-   REGISTER
-====================== */
-export const registerUser = async (req, res) => {
+
+export const signup = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password ,role} = req.body;
 
     const existUser = await User.findOne({ email });
     if (existUser) {
@@ -23,12 +21,14 @@ export const registerUser = async (req, res) => {
       role: role || "user",
     });
 
-    const token = generateToken(user);
-
     res.status(201).json({
       success: true,
-      user,
-      token,
+      user:{
+        id:user._id,
+        name:user.name,
+        email:user.email,
+        role:user.role
+      }
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
