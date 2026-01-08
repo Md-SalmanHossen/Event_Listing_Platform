@@ -65,26 +65,39 @@ export const createEvent = async (req, res) => {
 };
 
 
-
-
-/* ======================
-   GET ALL EVENTS (Public)
-====================== */
 export const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find({ isActive: true }).populate(
-      "organizer",
-      "name email"
-    );
+
+    const {category,location,page=1,limit=10}=req.query;
+    const query={isActive:true};
+
+    if(category) query.category=category;
+    if(location) query.location={$regex:location,$options:"i"};
+
+    const skip=(parseInt(page)-1)*parseInt(limit);
+
+
+    const events=await Event.find(query)
+      .populate("organizer", "name email")
+      .sort({ date: 1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalEvents=await Event.countDocuments(query);
 
     res.status(200).json({
       success: true,
+      totalEvents,
+      totalPages: Math.ceil(totalEvents / limit),
+      currentPage: parseInt(page),
       events,
     });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 /* ======================
    GET ORGANIZER EVENTS
