@@ -53,9 +53,7 @@ const eventSchema = new mongoose.Schema(
 
     availableTickets: {
       type: Number,
-      default: function () {
-        return this.totalTickets;
-      },
+      required:true,
     },
 
     organizer: {

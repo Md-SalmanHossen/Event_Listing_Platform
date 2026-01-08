@@ -1,16 +1,39 @@
 import Ticket from "../models/Ticket.model.js";
 import Event from "../models/Event.model.js";
 
-/* ======================
-   BOOK TICKET
-====================== */
+
 export const bookTicket = async (req, res) => {
   try {
     const { eventId } = req.body;
 
-    const event = await Event.findById(eventId);
-    if (!event || event.availableTickets <= 0) {
-      return res.status(400).json({ message: "Ticket not available" });
+    const alreadyBooked = await Ticket.findOne({
+      event: eventId,
+      user: req.user.id,
+      status: { $in: ['pending', 'confirmed'] }
+    });
+
+    if (alreadyBooked) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already booked this event'
+      });
+    }
+
+    const event = await Event.findOneAndUpdate(
+      {
+        _id: eventId,
+        isActive: true,
+        availableTickets: { $gt: 0 }
+      },
+      { $inc: { availableTickets: -1 } },
+      { new: true }
+    );
+
+    if (!event) {
+      return res.status(400).json({
+        success: false,
+        message: 'Event not found or tickets sold out'
+      });
     }
 
     const ticket = await Ticket.create({
@@ -18,20 +41,23 @@ export const bookTicket = async (req, res) => {
       event: eventId,
       organizer: event.organizer,
       price: event.ticketPrice,
-      status: "confirmed",
+      status: 'pending'
     });
-
-    event.availableTickets -= 1;
-    await event.save();
 
     res.status(201).json({
       success: true,
-      ticket,
+      message: 'Ticket booking request submitted',
+      ticket
     });
+
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
+
 
 /* ======================
    USER TICKETS
