@@ -69,7 +69,6 @@ export const login = async (req, res) => {
 };
 
 
-
 export const getProfile = async (req, res) => {
   try {
 
@@ -87,30 +86,73 @@ export const getProfile = async (req, res) => {
       success: true,
       user
     });
-    
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-/* ======================
-   UPDATE PROFILE IMAGE
-====================== */
 export const updateProfileImage = async (req, res) => {
   try {
-    const image = req.file?.path;
+
+    if(!req.file){
+      return res.status(400).json({
+        success:false,
+        message:'No image uploaded'
+      });
+    }
+    const imageUrl = req.file.path;
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { image },
+      { image:imageUrl },
       { new: true }
-    );
+    ).select('-password');
 
+    if(!user){
+      return res.status(404).json({
+        success:false,
+        message:'User not found'
+      })
+    }
     res.status(200).json({
       success: true,
-      user,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const roleToOrganizer=async(req, res)=>{
+  try {
+    const user=await User.findById(req.user.id);
+
+    if(!user){
+      return res.status(404).json({
+        success:false,
+        message:'User not found'
+      })
+    }
+
+    if(user.role==='organizer'){
+      return res.status(400).json({
+        success:'false',
+        message:'You are already an organizer'
+      })
+    }
+
+    user.role='organizer';
+    await user.save();
+
+     res.status(200).json({
+      success: true,
+      message: "You are now an organizer",
+    });
+    
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
