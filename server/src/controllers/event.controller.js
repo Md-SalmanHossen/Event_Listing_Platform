@@ -98,10 +98,33 @@ export const getAllEvents = async (req, res) => {
   }
 };
 
+export const getSingleEvent=async(req, res)=>{
+  try {
+    const {id}=req.params;
 
-/* ======================
-   GET ORGANIZER EVENTS
-====================== */
+    const event=await Event.findById(id).populate('organizer','name email');
+
+    if(!event || !event.isActive){
+      return res.status(404).json({
+        success:false,
+        message:'Event not found'
+      })
+    };
+
+    res.status(200).json({
+      success:true,
+      event
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success:false,
+      message:error.message
+    })
+  }
+}
+
+
 export const getOrganizerEvents = async (req, res) => {
   try {
     const events = await Event.find({ organizer: req.user.id });

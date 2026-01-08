@@ -5,10 +5,8 @@ import upload from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
-// /* PUBLIC */
-// router.get("/", getAllEvents);
-// router.get("/:id", getSingleEvent);
 router.get('/',event.getAllEvents);
+router.get('/:id',event.getSingleEvent)
 
 /* ORGANIZER */
 router.post('/',protect, upload.single('image'), event.createEvent);
