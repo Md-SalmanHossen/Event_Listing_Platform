@@ -91,13 +91,16 @@ export const getUserTickets = async (req, res) => {
 export const cancelTicket=async(req,res)=>{
   try {
     const {ticketId}=req.params;
-
+    console.log('ticketId param',ticketId);
+    
     const ticket=await Ticket.findOne({
       _id:ticketId,
       user:req.user.id,
-      status:{$inc:['pending','confirmed']},
+      status:{$in:['pending','confirmed']},
     });
 
+    console.log('ticket found',ticket);
+    
     if(!ticket){
       return res.status(404).json({
         success:false,
@@ -123,7 +126,7 @@ export const cancelTicket=async(req,res)=>{
       message:error.message
     })
   }
-}
+};
 
 /* ======================
    ORGANIZER TICKETS
