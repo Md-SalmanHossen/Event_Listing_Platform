@@ -18,8 +18,19 @@ const eventSchema = new mongoose.Schema(
       required: true,
     },
 
+    time: {
+      type: String,
+      required: true,
+    },
+
     location: {
       type: String,
+      required: true,
+    },
+
+    category: {
+      type: String,
+      enum: ["Music", "Tech", "Sports", "Education", "Art", "Other"],
       required: true,
     },
 
@@ -42,7 +53,9 @@ const eventSchema = new mongoose.Schema(
 
     availableTickets: {
       type: Number,
-      required: true,
+      default: function () {
+        return this.totalTickets;
+      },
     },
 
     organizer: {
@@ -59,12 +72,5 @@ const eventSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-eventSchema.pre("save", function (next) {
-  if (this.isNew) {
-    this.availableTickets = this.totalTickets;
-  }
-  next();
-});
-
-const Event= mongoose.model("Event", eventSchema);
+const Event = mongoose.model("Event", eventSchema);
 export default Event;

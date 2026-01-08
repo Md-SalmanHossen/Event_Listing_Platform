@@ -7,39 +7,65 @@ export const createEvent = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    const {title,description,date,location,ticketPrice,totalTickets}=req.body;
-    if (!title || !description || !date || !location || !ticketPrice || !totalTickets) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
-    }
+    const {
+      title,
+      description,
+      time,
+      date,
+      location,
+      category,
+      ticketPrice,
+      totalTickets,
+    } = req.body;
 
-    if(!req.file ||!req.file.path){
+    if (
+      !title ||
+      !description ||
+      !time ||
+      !date ||
+      !location ||
+      !category ||
+      ticketPrice === undefined ||
+      totalTickets === undefined
+    ) {
       return res.status(400).json({
-        success:false,
-        message:'Event image is required'
-      })
+        success: false,
+        message: "All fields are required",
+      });
     }
 
-
+    if (!req.file || !req.file.path) {
+      return res.status(400).json({
+        success: false,
+        message: "Event image is required",
+      });
+    }
 
     const event = await Event.create({
       title,
       description,
       date,
+      time,
       location,
+      category,
       ticketPrice,
       totalTickets,
-      image:req.file.path,
-      organizer:req.user.id
+      image: req.file.path,
+      organizer: req.user.id,
     });
 
     res.status(201).json({
       success: true,
+      message: "Event created successfully",
       event,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+
 
 /* ======================
    GET ALL EVENTS (Public)

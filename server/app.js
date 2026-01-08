@@ -26,7 +26,7 @@ app.use(express.urlencoded({extended:true}));
 await connectDB();
 
 app.use('/v1/user',user_router);
-app.use('/v1/user',event_router);
+app.use('/v1/user/event',event_router);
 
 app.use(routeHandler);
 
