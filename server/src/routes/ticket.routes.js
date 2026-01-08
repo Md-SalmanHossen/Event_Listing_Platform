@@ -8,7 +8,6 @@ const router = express.Router();
 router.post('/book', protect, ticket.bookTicket);
 router.get('/my', protect, ticket.getUserTickets);
 
-// router.get("/my", authMiddleware, getUserTickets);
 // router.put("/cancel/:id", authMiddleware, cancelTicket);
 
 // /* ORGANIZER */
