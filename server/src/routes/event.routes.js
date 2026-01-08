@@ -14,12 +14,6 @@ router.put('/:id',protect ,upload.single('image'), event.updateEvent);
 router.delete('/:id', protect, event.deleteEvent);
 
 
-// router.delete(
-//   "/:id",
-//   authMiddleware,
-//   deleteEvent
-// );
-
 // router.get(
 //   "/organizer/my-events",
 //   authMiddleware,
