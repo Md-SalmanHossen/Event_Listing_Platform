@@ -11,13 +11,7 @@ router.get('/:id',event.getSingleEvent)
 /* ORGANIZER */
 router.post('/',protect, upload.single('image'), event.createEvent);
 router.put('/:id',protect ,upload.single('image'), event.updateEvent);
-router.delete('/:id', protect, event.deleteEvent);
+router.get('/organizer/my-event', protect, event.getOrganizerEvents)
 
-
-// router.get(
-//   "/organizer/my-events",
-//   authMiddleware,
-//   getOrganizerEvents
-// );
 
 export default router;

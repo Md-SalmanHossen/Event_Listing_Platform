@@ -124,20 +124,34 @@ export const getSingleEvent=async(req, res)=>{
   }
 }
 
-
-export const getOrganizerEvents = async (req, res) => {
+export const getOrganizerEvents=async(req,res)=>{
   try {
-    const events = await Event.find({ organizer: req.user.id });
 
+    const {page=1,limit=10}=req.query;
+    const skip=(parseInt(page)-1)*parseInt(limit);
+
+    const events=await Event.find({organizer:req.user.id})
+      .sort({date:1})
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalEvent=await Event.countDocuments({organizer:req.user.id});
+    
     res.status(200).json({
-      success: true,
-      events,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+      success:true,
+      totalEvent,
+      totalPages:Math.ceil(totalEvent/limit),
+      currentPage:parseInt(page),
+      events
+    })
 
+  } catch (error) {
+    res.status(500).json({
+      success:true,
+      message:error.message
+    });
+  }
+}
 
 export const updateEvent = async (req, res) => {
   try {
@@ -175,7 +189,7 @@ export const updateEvent = async (req, res) => {
 
 export const deleteEvent = async (req, res) => {
   try {
-    
+
     const {id}=req.params;
 
     const event=await Event.findOneAndDelete({
