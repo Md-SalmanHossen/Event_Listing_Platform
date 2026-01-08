@@ -1,18 +1,35 @@
 import Event from "../models/Event.model.js";
 
-/* ======================
-   CREATE EVENT (Organizer)
-====================== */
+
 export const createEvent = async (req, res) => {
   try {
     if (req.user.role !== "organizer") {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
+    const {title,description,date,location,ticketPrice,totalTickets}=req.body;
+    if (!title || !description || !date || !location || !ticketPrice || !totalTickets) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    if(!req.file ||!req.file.path){
+      return res.status(400).json({
+        success:false,
+        message:'Event image is required'
+      })
+    }
+
+
+
     const event = await Event.create({
-      ...req.body,
-      image: req.file?.path,
-      organizer: req.user.id,
+      title,
+      description,
+      date,
+      location,
+      ticketPrice,
+      totalTickets,
+      image:req.file.path,
+      organizer:req.user.id
     });
 
     res.status(201).json({

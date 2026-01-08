@@ -6,6 +6,8 @@ import cors from "cors";
 import routeHandler from './src/middlewares/route_handler.middleware.js'
 import connectDB from './src/configs/db.config.js'
 import user_router from './src/routes/user.routes.js'
+import event_router from './src/routes/event.routes.js'
+
 
 dotenv.config();
 
@@ -24,6 +26,7 @@ app.use(express.urlencoded({extended:true}));
 await connectDB();
 
 app.use('/v1/user',user_router);
+app.use('/v1/user',event_router);
 
 app.use(routeHandler);
 
