@@ -1,12 +1,12 @@
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import cloudinary from "../configs/cloudinary.config.js"; // note: configs folder, plural
+import cloudinary from "../configs/cloudinary.config.js";
 
 // Cloudinary storage settings
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "events", // events or users folder separate rakhte paro
+    folder: "events", 
     allowed_formats: ["jpg", "png", "jpeg", "webp"],
     transformation: [{ width: 500, height: 500, crop: "fill" }],
   },
