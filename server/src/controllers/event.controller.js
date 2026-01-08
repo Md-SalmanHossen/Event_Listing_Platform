@@ -138,35 +138,57 @@ export const getOrganizerEvents = async (req, res) => {
   }
 };
 
-/* ======================
-   UPDATE EVENT
-====================== */
+
 export const updateEvent = async (req, res) => {
   try {
-    const event = await Event.findOneAndUpdate(
-      { _id: req.params.id, organizer: req.user.id },
-      req.body,
-      { new: true }
-    );
+    
+    const {id}=req.params;
+    const updateData={...req.body};
+
+    if(req.file && req.file.path){
+      updateData.image=req.file.path;
+    }
+
+    const event=await Event.findOneAndUpdate(
+      {_id:id, organizer:req.user.id, isActive:true},
+      updateData,
+      {new:true, runValidators:true},
+    ).populate('organizer','name email');
+
+    if(!event){
+      return res.status(404).json({
+        success:false,
+        message:'Event not found or you are not authorized'
+      });
+    }
 
     res.status(200).json({
       success: true,
       event,
     });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-/* ======================
-   DELETE EVENT
-====================== */
+
 export const deleteEvent = async (req, res) => {
   try {
-    await Event.findOneAndDelete({
-      _id: req.params.id,
-      organizer: req.user.id,
-    });
+    const {id}=req.params;
+
+    const event=await Event.findOneAndUpdate(
+      {_id:id,organizer:req.user.id, isActive:true},
+      {isActive:false},
+      {new:true}
+    )
+
+    if(!event){
+      return res.status(404).json({
+        success:false,
+        message:'Event not found or you are not authorized'
+      });
+    }
 
     res.status(200).json({
       success: true,

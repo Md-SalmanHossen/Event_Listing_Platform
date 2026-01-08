@@ -10,15 +10,9 @@ router.get('/:id',event.getSingleEvent)
 
 /* ORGANIZER */
 router.post('/',protect, upload.single('image'), event.createEvent);
+router.put('/:id',protect ,upload.single('image'), event.updateEvent);
+router.delete('/:id', protect, event.deleteEvent);
 
-
-
-// router.put(
-//   "/:id",
-//   authMiddleware,
-//   upload.single("image"),
-//   updateEvent
-// );
 
 // router.delete(
 //   "/:id",
