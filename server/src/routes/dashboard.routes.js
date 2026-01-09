@@ -1,9 +1,11 @@
 import express from "express";
-import authMiddleware from "../middlewares/auth.middleware.js";
+import protect from "../middlewares/auth.middleware.js";
+import *as dashboard from '../controllers/dashboard.controller.js'
+
 
 const router = express.Router();
 
-router.get("/user", authMiddleware, getUserDashboard);
+router.get("/user", protect, dashboard.userDashboard);
 router.get("/organizer", authMiddleware, getOrganizerDashboard);
 
 export default router;

@@ -4,21 +4,25 @@ import Event from "../models/Event.model.js";
 
 export const userDashboard = async (req, res) => {
   try {
-    const tickets = await Ticket.find({ user: req.user.id });
 
-    const totalSpent = tickets.reduce(
-      (sum, t) => sum + (t.status === "confirmed" ? t.price : 0),
-      0
-    );
+    const tickets = await Ticket.find({user: req.user.id})
+      .populate('event','title date time location')
+      .sort({createdAt:-1});
+    
+    const confirmedTicket=tickets.filter(t=>t.status==='confirmed');
+    const totalSpent=confirmedTicket.reduce((sum,t)=>sum+t.price,0);
 
+    const recentTickets=tickets.slice(0,5);
+    
     res.status(200).json({
       success: true,
       dashboard: {
         totalTickets: tickets.length,
         totalSpent,
-        recentTickets: tickets.slice(-5),
+        recentTickets,
       },
     });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
