@@ -9,7 +9,7 @@ import user_router from './src/routes/user.routes.js'
 import event_router from './src/routes/event.routes.js'
 import ticket_router from './src/routes/ticket.routes.js'
 import organizer_router from './src/routes/organizer.routes.js'
-
+import dashboard_router from './src/routes/dashboard.routes.js'
 
 dotenv.config();
 
@@ -31,6 +31,7 @@ app.use('/v1/user',user_router);
 app.use('/v1/user/event',event_router);
 app.use('/v1/user/ticket',ticket_router);
 app.use('/v1/organizer',organizer_router);
+app.use('/v1/dashboard',dashboard_router);
 
 app.use(routeHandler);
 

@@ -1,0 +1,873 @@
+{
+	"info": {
+		"_postman_id": "d304a599-78ab-4908-96fa-b65af7fd952d",
+		"name": "Event_Listing_Platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38345690"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "resgister",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Salman2\",\r\n  \"email\": \"salman2@gmail.com\",\r\n  \"password\": \"12345678\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "organizer login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"salman1@gmail.com\",\r\n  \"password\": \"12345678\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"salman2@gmail.com\",\r\n  \"password\": \"12345678\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY3ODY0NTUxLCJleHAiOjE3Njg0NjkzNTF9.0HS94mDRj-uoGTw9c4OfVtdzJ1JghQ29LQCq3__UWd0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"salman1@gmail.com\",\r\n  \"password\": \"12345678\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update profile image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY3ODY0NTUxLCJleHAiOjE3Njg0NjkzNTF9.0HS94mDRj-uoGTw9c4OfVtdzJ1JghQ29LQCq3__UWd0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1f0ec78e-a02d-4450-85ae-35d8bdf0a5d4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "become organizer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY3ODY0NTUxLCJleHAiOjE3Njg0NjkzNTF9.0HS94mDRj-uoGTw9c4OfVtdzJ1JghQ29LQCq3__UWd0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/become-organizer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"become-organizer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Event",
+			"item": [
+				{
+					"name": "create event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJvcmdhbml6ZXIiLCJpYXQiOjE3Njc5ODI4OTYsImV4cCI6MTc2ODU4NzY5Nn0.7EoeS8VHakvTh0c3e3W6YdLDJ1EPUz1dL2tffq0UvqE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "App Development Conference 2026",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "React Native",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "2026-02-20",
+									"type": "text"
+								},
+								{
+									"key": "time",
+									"value": "2:00 PM",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Rangpur",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Tech",
+									"type": "text"
+								},
+								{
+									"key": "ticketPrice",
+									"value": "300",
+									"type": "text"
+								},
+								{
+									"key": "totalTickets",
+									"value": "50",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/MSI/Pictures/Screenshots/Screenshot 2026-01-04 003640.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/event",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all events",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJvcmdhbml6ZXIiLCJpYXQiOjE3Njc4NzAyODIsImV4cCI6MTc2ODQ3NTA4Mn0.ZNulW1HFJeMdAGIGL5H1Fs6UIdFXrg07wsXs0HcHv6I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Tech Conference 2026",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "MERN stack learning event",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "2026-02-15",
+									"type": "text"
+								},
+								{
+									"key": "time",
+									"value": "6:00 PM",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Dhaka",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Tech",
+									"type": "text"
+								},
+								{
+									"key": "ticketPrice",
+									"value": "500",
+									"type": "text"
+								},
+								{
+									"key": "totalTickets",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/MSI/Pictures/Camera Roll/WIN_20240319_12_59_51_Pro.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/event?page=1&limit=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"event"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get single event",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJvcmdhbml6ZXIiLCJpYXQiOjE3Njc4NzAyODIsImV4cCI6MTc2ODQ3NTA4Mn0.ZNulW1HFJeMdAGIGL5H1Fs6UIdFXrg07wsXs0HcHv6I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Tech Conference 2026",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "MERN stack learning event",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "2026-02-15",
+									"type": "text"
+								},
+								{
+									"key": "time",
+									"value": "6:00 PM",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Dhaka",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Tech",
+									"type": "text"
+								},
+								{
+									"key": "ticketPrice",
+									"value": "500",
+									"type": "text"
+								},
+								{
+									"key": "totalTickets",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/MSI/Pictures/Camera Roll/WIN_20240319_12_59_51_Pro.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/event/695f983f6b3d513a47426e88",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"event",
+								"695f983f6b3d513a47426e88"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJvcmdhbml6ZXIiLCJpYXQiOjE3Njc4NzAyODIsImV4cCI6MTc2ODQ3NTA4Mn0.ZNulW1HFJeMdAGIGL5H1Fs6UIdFXrg07wsXs0HcHv6I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/MSI/Pictures/Screenshots/Screenshot 2025-12-21 233437.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/event/695f983f6b3d513a47426e88",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"event",
+								"695f983f6b3d513a47426e88"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJvcmdhbml6ZXIiLCJpYXQiOjE3Njc4ODc3MjYsImV4cCI6MTc2ODQ5MjUyNn0.m84KAP2VR-rrP6cZydT4b41VRb6WQSMvx9Q4T-u29u4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/MSI/Pictures/Screenshots/Screenshot 2025-12-21 233437.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/event/695f983f6b3d513a47426e88",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"event",
+								"695f983f6b3d513a47426e88"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "organizer event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJvcmdhbml6ZXIiLCJpYXQiOjE3Njc4ODc3MjYsImV4cCI6MTc2ODQ5MjUyNn0.m84KAP2VR-rrP6cZydT4b41VRb6WQSMvx9Q4T-u29u4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/v1/user/event/organizer/my-event",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"event",
+								"organizer",
+								"my-event"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ticket_Booking",
+			"item": [
+				{
+					"name": "book ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWZlNGM5NWNhYzcyY2QzMDhmYzk5MyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY3OTg2MDE3LCJleHAiOjE3Njg1OTA4MTd9.WA4x7B5LXlWAffrM9I-hnAywR7AxzW7SGAsKOdBZFlI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"eventId\":\"69614bc0dbfbb10065fad291\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/ticket/book",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"ticket",
+								"book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user ticket",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWZlNGM5NWNhYzcyY2QzMDhmYzk5MyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY3ODkyMTg0LCJleHAiOjE3Njg0OTY5ODR9.BzfsSKbszY56vvuuVnE7muXeqakmXNH8gWChVwJkIog",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"eventId\":\"695fd7c23ac535f2849af3f4\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/ticket/my",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"ticket",
+								"my"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel ticekt",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWZlNGM5NWNhYzcyY2QzMDhmYzk5MyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY3ODkyMTg0LCJleHAiOjE3Njg0OTY5ODR9.BzfsSKbszY56vvuuVnE7muXeqakmXNH8gWChVwJkIog",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"eventId\":\"695fd7c23ac535f2849af3f4\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/user/ticket/cancel/695fe5f9b8c56e119f9fcb46",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"ticket",
+								"cancel",
+								"695fe5f9b8c56e119f9fcb46"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "event confirmed",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJvcmdhbml6ZXIiLCJpYXQiOjE3Njc5ODI4OTYsImV4cCI6MTc2ODU4NzY5Nn0.7EoeS8VHakvTh0c3e3W6YdLDJ1EPUz1dL2tffq0UvqE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/v1/user/ticket/confirmed/69614c45dbfbb10065fad295",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"user",
+								"ticket",
+								"confirmed",
+								"69614c45dbfbb10065fad295"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "organizer tickets",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJvcmdhbml6ZXIiLCJpYXQiOjE3Njc5ODI4OTYsImV4cCI6MTc2ODU4NzY5Nn0.7EoeS8VHakvTh0c3e3W6YdLDJ1EPUz1dL2tffq0UvqE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"eventId\":\"69614bc0dbfbb10065fad291\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/organizer/tickets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"organizer",
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dashboard",
+			"item": [
+				{
+					"name": "user dashboard",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWZlNGM5NWNhYzcyY2QzMDhmYzk5MyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY3OTg2MDE3LCJleHAiOjE3Njg1OTA4MTd9.WA4x7B5LXlWAffrM9I-hnAywR7AxzW7SGAsKOdBZFlI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"eventId\":\"69614bc0dbfbb10065fad291\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5000/v1/dashboard/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"dashboard",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "organizer dashboard",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWY3NjEyMTA2Yjc2YTFiZjQxNmQwOSIsInJvbGUiOiJvcmdhbml6ZXIiLCJpYXQiOjE3Njc5ODI4OTYsImV4cCI6MTc2ODU4NzY5Nn0.7EoeS8VHakvTh0c3e3W6YdLDJ1EPUz1dL2tffq0UvqE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/v1/dashboard/organizer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"v1",
+								"dashboard",
+								"organizer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

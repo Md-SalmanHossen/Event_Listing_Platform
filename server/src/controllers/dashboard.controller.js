@@ -13,7 +13,7 @@ export const userDashboard = async (req, res) => {
     const totalSpent=confirmedTicket.reduce((sum,t)=>sum+t.price,0);
 
     const recentTickets=tickets.slice(0,5);
-    
+
     res.status(200).json({
       success: true,
       dashboard: {
@@ -29,29 +29,31 @@ export const userDashboard = async (req, res) => {
 };
 
 
-/* ======================
-   ORGANIZER DASHBOARD
-====================== */
 export const organizerDashboard = async (req, res) => {
   try {
     const events = await Event.find({ organizer: req.user.id });
-    const tickets = await Ticket.find({ organizer: req.user.id });
 
-    const revenue = tickets.reduce(
-      (sum, t) => sum + (t.status === "confirmed" ? t.price : 0),
-      0
-    );
+    const tickets = await Ticket.find({ organizer: req.user.id })
+      .populate("user", "name email")
+      .populate("event", "title date time location")
+      .sort({ createdAt: -1 });
+
+    const confirmedTickets = tickets.filter(t => t.status === "confirmed");
+    const totalRevenue = confirmedTickets.reduce((sum, t) => sum + t.price, 0);
+
+    const recentTickets = tickets.slice(0, 5);
 
     res.status(200).json({
       success: true,
       dashboard: {
         totalEvents: events.length,
         totalTickets: tickets.length,
-        totalRevenue: revenue,
-        recentTickets: tickets.slice(-5),
+        totalRevenue,
+        recentTickets,
       },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
