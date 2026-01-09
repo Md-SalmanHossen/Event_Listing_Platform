@@ -90,16 +90,14 @@ export const getUserTickets = async (req, res) => {
 
 export const cancelTicket=async(req,res)=>{
   try {
-    const {ticketId}=req.params;
-    console.log('ticketId param',ticketId);
+    const {id}=req.params;
     
     const ticket=await Ticket.findOne({
-      _id:ticketId,
+      _id:id,
       user:req.user.id,
       status:{$in:['pending','confirmed']},
     });
 
-    console.log('ticket found',ticket);
     
     if(!ticket){
       return res.status(404).json({
@@ -127,6 +125,49 @@ export const cancelTicket=async(req,res)=>{
     })
   }
 };
+
+export const confirmedTicket=async(req ,res)=>{
+  try {
+
+    const {id}=req.params;
+
+    if(req.user.role!=='organizer'){
+      return res.status(403).json({
+        success:false,
+        message:'Only organizer can confirm tickets'
+      });
+    }
+
+    const ticket=await Ticket.findOne({
+      _id:id,
+      organizer:req.user.id,
+      status:'pending'
+    });
+
+    if(!ticket){
+      return res.status(404).json({
+        success:false,
+        message:'Ticket not found or already processed'
+      });
+    }
+
+    ticket.status='confirmed';
+    await ticket.save();
+
+    res.status(200).json({
+      success:true,
+      message:'Ticket confirmed successfully',
+      ticket,
+    });
+
+    
+  } catch (error) {
+    res.status(500).json({
+      success:false,
+      message:error.message
+    })
+  }
+}
 
 /* ======================
    ORGANIZER TICKETS
