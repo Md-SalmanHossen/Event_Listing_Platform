@@ -185,16 +185,10 @@ export const confirmedTicket=async(req ,res)=>{
 export const getOrganizerTickets = async (req, res) => {
   try {
 
-    if(req.user.role!=='organizer'){
-      return res.status(403).json({
-        success:false,
-        message:'Only organizer can access tickets'
-      });
-    }
-
     const tickets = await Ticket.find({organizer: req.user.id,})
       .populate('user','name email')
-      .populate("event", "title date time location");
+      .populate("event", "title date time location")
+      .sort({createdAt:-1});
 
     res.status(200).json({
       success: true,

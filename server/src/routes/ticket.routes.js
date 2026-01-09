@@ -11,11 +11,7 @@ router.get('/my', protect, ticket.getUserTickets);
 router.put('/cancel/:id', protect, ticket.cancelTicket);
 router.put('/confirmed/:id', protect, ticket.confirmedTicket);
 
-// /* ORGANIZER */
-// router.get(
-//   "/organizer",
-//   authMiddleware,
-//   getOrganizerTickets
-// );
+router.get('/organizer-tickets', protect, ticket.getOrganizerTickets);
+
 
 export default router;
