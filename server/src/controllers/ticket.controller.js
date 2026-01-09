@@ -131,6 +131,8 @@ export const confirmedTicket=async(req ,res)=>{
 
     const {id}=req.params;
 
+    console.log("event id",id);
+    
     if(req.user.role!=='organizer'){
       return res.status(403).json({
         success:false,
@@ -138,16 +140,27 @@ export const confirmedTicket=async(req ,res)=>{
       });
     }
 
-    const ticket=await Ticket.findOne({
-      _id:id,
-      organizer:req.user.id,
-      status:'pending'
-    });
-
+    const ticket=await Ticket.findById(id).populate('event');
+    console.log('ticket', ticket);
+    
     if(!ticket){
       return res.status(404).json({
         success:false,
         message:'Ticket not found or already processed'
+      });
+    }
+
+    if(ticket.event.organizer.toString()!==req.user.id){
+      return res.status(403).json({
+        success:false,
+        message:'You are not allowed to confirm this ticket'
+      });
+    }
+    
+    if(ticket.status!=='pending'){
+      return res.status(400).json({
+        success:false,
+        message:'Ticket already processed'
       });
     }
 
@@ -160,7 +173,7 @@ export const confirmedTicket=async(req ,res)=>{
       ticket,
     });
 
-    
+
   } catch (error) {
     res.status(500).json({
       success:false,
