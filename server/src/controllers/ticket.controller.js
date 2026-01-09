@@ -156,7 +156,7 @@ export const confirmedTicket=async(req ,res)=>{
         message:'You are not allowed to confirm this ticket'
       });
     }
-    
+
     if(ticket.status!=='pending'){
       return res.status(400).json({
         success:false,
@@ -182,19 +182,26 @@ export const confirmedTicket=async(req ,res)=>{
   }
 }
 
-/* ======================
-   ORGANIZER TICKETS
-====================== */
 export const getOrganizerTickets = async (req, res) => {
   try {
-    const tickets = await Ticket.find({
-      organizer: req.user.id,
-    }).populate("event user", "title name email");
+
+    if(req.user.role!=='organizer'){
+      return res.status(403).json({
+        success:false,
+        message:'Only organizer can access tickets'
+      });
+    }
+
+    const tickets = await Ticket.find({organizer: req.user.id,})
+      .populate('user','name email')
+      .populate("event", "title date time location");
 
     res.status(200).json({
       success: true,
+      totalTickets:tickets.length,
       tickets,
     });
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
