@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Footer=()=>{
   return (
-    <footer className="w-full bg-slate-50 text-gray-700">
+    <footer className="w-full bg-green-50 text-gray-700 mt-15">
       <div className="max-w-6xl mx-auto px-6 py-14 flex flex-col gap-10">
 
         {/* Top */}
@@ -24,7 +24,6 @@ const Footer=()=>{
           <div className="flex gap-6 text-sm font-medium">
             <Link to="/" className="hover:text-black transition">Home</Link>
             <Link to="/Events" className="hover:text-black transition">Events</Link>
-            <Link to="/about" className="hover:text-black transition">About</Link>
             <Link to="/contact" className="hover:text-black transition">Contact</Link>
           </div>
         </div>
@@ -40,7 +39,7 @@ const Footer=()=>{
             LinkedIn
           </a>
         </div>
-
+         <hr />
         {/* Bottom */}
         <p className="text-center text-sm text-gray-500">
           © {new Date().getFullYear()} Salman Hossen. All rights reserved.
