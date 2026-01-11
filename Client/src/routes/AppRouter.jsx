@@ -10,11 +10,11 @@ import BookingTicket from "../pages/BookingTicket";
 // Dashboard imports
 import DashboardLayout from "../pages/dashboard/DashboardLayout";
 import UserDashboard from "../pages/dashboard/UserDashboard";
-import OrganizerDashboard from "../pages/dashboard/OrganizerDashboard";
 import MyTickets from "../pages/dashboard/MyTickets";
 import Profile from "../pages/dashboard/Profile";
 import MyEvents from "../pages/dashboard/MyEvent";
 import CreateEvent from "../pages/dashboard/CreateEvent";
+import Tickets from "../pages/dashboard/Ticket";
 
 const AppRouter = () => {
   return (
@@ -33,14 +33,15 @@ const AppRouter = () => {
 
       {/* Dashboard Routes */}
       <Route path="/dashboard" element={<DashboardLayout />}>
-        <Route index element={<UserDashboard />} />
+        {/* User Routes */}
         <Route path="user" element={<UserDashboard />} />
         <Route path="user/my-tickets" element={<MyTickets />} />
         <Route path="user/profile" element={<Profile />} />
 
-        <Route path="organizer" element={<OrganizerDashboard />} />
-        <Route path="organizer/my-events" element={<MyEvents />} />
-        <Route path="organizer/create-event" element={<CreateEvent />} />
+        {/* Organizer Routes */}
+        <Route path="my-events" element={<MyEvents />} />
+        <Route path="create-event" element={<CreateEvent />} />
+        <Route path="tickets" element={<Tickets />} />
       </Route>
     </Routes>
   );
