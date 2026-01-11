@@ -1,6 +1,6 @@
 import useAuthStore from '../../library/store/store'
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Ticket, User, Calendar, PlusCircle, LogOut } from 'lucide-react';
+import { LayoutDashboard, Ticket, User, Calendar, PlusCircle, LogOut, Home } from 'lucide-react';
 
 const DashboardLayout = () => {
   const { user, token, logout } = useAuthStore();
@@ -28,9 +28,24 @@ const DashboardLayout = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
         <div className="p-6">
-          <h1 className="text-xl font-black text-indigo-600 uppercase tracking-tighter">EventCloud</h1>
+          <Link to="/" className="text-xl font-black text-indigo-600 uppercase tracking-tighter">
+            EventCloud
+          </Link>
         </div>
+
         <nav className="flex-1 px-4 space-y-1">
+          {/* Back to Home Button (Extra add kora holo) */}
+          <Link
+            to="/"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-emerald-600 hover:bg-emerald-50 transition-all mb-4 border border-emerald-100"
+          >
+            <Home size={20} /> Back to Home
+          </Link>
+
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 mb-2">
+            Menu
+          </div>
+
           {menuItems.map((item) => (
             <Link
               key={item.path}
@@ -45,6 +60,7 @@ const DashboardLayout = () => {
             </Link>
           ))}
         </nav>
+
         <div className="p-4 border-t">
           <button onClick={logout} className="flex items-center gap-3 px-4 py-3 text-red-500 font-bold w-full hover:bg-red-50 rounded-xl transition-all">
             <LogOut size={20}/> Logout
@@ -55,7 +71,11 @@ const DashboardLayout = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-y-auto">
         <header className="bg-white border-b border-gray-200 p-4 sticky top-0 z-10 flex justify-between items-center">
-          <span className="font-bold text-gray-800 md:hidden">Dashboard</span>
+          {/* Mobile Home Link */}
+          <Link to="/" className="md:hidden p-2 text-indigo-600">
+            <Home size={24} />
+          </Link>
+
           <div className="flex items-center gap-3 ml-auto">
             <div className="text-right">
               <p className="text-sm font-bold text-gray-900 leading-none">{user.name}</p>

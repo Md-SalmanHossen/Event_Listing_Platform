@@ -10,7 +10,6 @@ const EventDetails = () => {
   const [bookingQty, setBookingQty] = useState(1);
   const [bookingLoading, setBookingLoading] = useState(false);
 
-  // Fetch single event
   const fetchEvent = async () => {
     try {
       const { data } = await api.get(`/user/event/${id}`);
@@ -22,19 +21,21 @@ const EventDetails = () => {
     }
   };
 
-  // Ticket Booking Function
   const handleBookTicket = async () => {
-    if (bookingQty < 1) return toast.error("Enter a valid quantity");
-    if (bookingQty > event.availableTickets)
-      return toast.error("Not enough tickets available");
-
     try {
       setBookingLoading(true);
-      const { data } = await api.post("/user/ticket/book", { eventId: id });
+      // Backend e 'eventId' pathacchi jeta tomar controller e dorkar
+      const { data } = await api.post("/user/ticket/book", { 
+        eventId: id 
+      });
+      
       toast.success(data.message || "Ticket booked successfully!");
-      // Optional: update UI
-      setEvent({ ...event, availableTickets: event.availableTickets - 1 });
-      setBookingQty(1);
+      
+      // UI update: availableTickets ekta komie deya
+      setEvent((prev) => ({
+        ...prev,
+        availableTickets: prev.availableTickets - 1
+      }));
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     } finally {
@@ -51,44 +52,46 @@ const EventDetails = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {/* Event Details */}
       <img
         src={event.image || "https://via.placeholder.com/800x400"}
         alt={event.title}
-        className="w-full h-64 object-cover rounded-lg"
+        className="w-full h-80 object-cover rounded-3xl shadow-lg"
       />
-      <h1 className="text-3xl font-bold mt-4">{event.title}</h1>
-      <p className="text-gray-600 mt-2">
-        📍 {event.location} | 📅 {event.date} | ⏰ {event.time}
-      </p>
-      <p className="mt-4 text-gray-700">{event.description}</p>
-      <p className="mt-2 text-gray-500">Tickets Available: {event.availableTickets}</p>
-      <p className="mt-1 text-gray-500">Price: ${event.ticketPrice}</p>
-
-      {/* Booking Form */}
-      {event.availableTickets > 0 ? (
-        <div className="mt-6 flex items-center gap-4">
-          <input
-            type="number"
-            value={bookingQty}
-            min={1}
-            max={event.availableTickets}
-            onChange={(e) => setBookingQty(parseInt(e.target.value))}
-            className="input input-bordered w-24"
-          />
-          <button
-            onClick={handleBookTicket}
-            disabled={bookingLoading}
-            className="btn bg-green-500 hover:bg-green-600 text-white"
-          >
-            {bookingLoading ? "Booking..." : "Book Ticket"}
-          </button>
+      <div className="mt-6">
+        <span className="bg-green-100 text-green-600 px-4 py-1 rounded-full text-sm font-bold">
+          {event.category}
+        </span>
+        <h1 className="text-4xl font-black mt-3 text-gray-900">{event.title}</h1>
+        <p className="text-gray-500 mt-2 flex items-center gap-2">
+          📍 {event.location} | 📅 {new Date(event.date).toLocaleDateString()} | ⏰ {event.time}
+        </p>
+        <div className="mt-6 p-6 bg-gray-50 rounded-2xl border border-dashed">
+            <h3 className="font-bold text-lg">About this event</h3>
+            <p className="mt-2 text-gray-700 leading-relaxed">{event.description}</p>
         </div>
-      ) : (
-        <button className="mt-6 btn bg-gray-400 text-gray-200 cursor-not-allowed">
-          Sold Out
-        </button>
-      )}
+
+        <div className="mt-8 flex items-center justify-between p-6 bg-white border rounded-3xl shadow-sm">
+          <div>
+            <p className="text-gray-500 text-sm">Price per ticket</p>
+            <p className="text-2xl font-black text-green-500">${event.ticketPrice}</p>
+            <p className="text-xs text-gray-400">Remaining: {event.availableTickets}</p>
+          </div>
+
+          {event.availableTickets > 0 ? (
+            <button
+              onClick={handleBookTicket}
+              disabled={bookingLoading}
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-2xl font-bold transition-all disabled:opacity-50"
+            >
+              {bookingLoading ? "Processing..." : "Book Ticket Now"}
+            </button>
+          ) : (
+            <button className="bg-gray-200 text-gray-500 px-8 py-4 rounded-2xl font-bold cursor-not-allowed">
+              Sold Out
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

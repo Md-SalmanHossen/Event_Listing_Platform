@@ -1,46 +1,77 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import api from "../../library/api/api";
 import toast from "react-hot-toast";
+import { Upload, Calendar, MapPin, DollarSign, Tag } from "lucide-react";
 
 const CreateEvent = () => {
   const [formData, setFormData] = useState({
-    title: "", description: "", date: "", time: "", 
-    location: "", category: "Music", ticketPrice: "", totalTickets: ""
+    title: "",
+    description: "",
+    date: "",
+    time: "",
+    location: "",
+    category: "Music",
+    ticketPrice: "",
+    totalTickets: "",
   });
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => setFormData({...formData, [e.target.name]: e.target.value});
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     const data = new FormData();
-    Object.keys(formData).forEach(key => data.append(key, formData[key]));
+    // Shob fields append kora
+    Object.keys(formData).forEach((key) => data.append(key, formData[key]));
     if (image) data.append("image", image);
 
     try {
-      await api.post("/user/event", data, { headers: { "Content-Type": "multipart/form-data" } });
+      await api.post("/organizer/event", data); // Backend route check: /organizer/event or /user/event
       toast.success("Event created successfully!");
+      // Form reset logic...
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message);
+      toast.error(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-      <h2 className="text-2xl font-black text-gray-800 mb-6">Create New Event</h2>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input name="title" onChange={handleChange} placeholder="Event Title" className="md:col-span-2 p-3 border rounded-xl" required />
-        <textarea name="description" onChange={handleChange} placeholder="Description" className="md:col-span-2 p-3 border rounded-xl h-24" required />
-        <input name="date" type="date" onChange={handleChange} className="p-3 border rounded-xl" required />
-        <input name="time" type="time" onChange={handleChange} className="p-3 border rounded-xl" required />
-        <input name="location" onChange={handleChange} placeholder="Location" className="p-3 border rounded-xl" required />
-        <select name="category" onChange={handleChange} className="p-3 border rounded-xl">
-          <option>Music</option><option>Sports</option><option>Tech</option><option>Workshop</option>
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-3xl shadow-sm border">
+      <h2 className="text-2xl font-black mb-6">Create New Event</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input type="text" name="title" placeholder="Event Title" className="w-full p-3 border rounded-xl" onChange={handleChange} required />
+        <textarea name="description" placeholder="Description" className="w-full p-3 border rounded-xl" onChange={handleChange} required />
+        
+        <div className="grid grid-cols-2 gap-4">
+           <input type="date" name="date" className="p-3 border rounded-xl" onChange={handleChange} required />
+           <input type="time" name="time" className="p-3 border rounded-xl" onChange={handleChange} required />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+           <input type="number" name="ticketPrice" placeholder="Ticket Price ($)" className="p-3 border rounded-xl" onChange={handleChange} required />
+           <input type="number" name="totalTickets" placeholder="Total Tickets" className="p-3 border rounded-xl" onChange={handleChange} required />
+        </div>
+
+        <select name="category" className="w-full p-3 border rounded-xl" onChange={handleChange}>
+           <option value="Music">Music</option>
+           <option value="Tech">Tech</option>
+           <option value="Sports">Sports</option>
         </select>
-        <input name="ticketPrice" type="number" onChange={handleChange} placeholder="Ticket Price ($)" className="p-3 border rounded-xl" required />
-        <input name="totalTickets" type="number" onChange={handleChange} placeholder="Total Tickets" className="p-3 border rounded-xl" required />
-        <input type="file" onChange={(e) => setImage(e.target.files[0])} className="md:col-span-2 p-2 border-2 border-dashed rounded-xl" required />
-        <button type="submit" className="md:col-span-2 bg-indigo-600 text-white py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all">Publish Event</button>
+
+        <div className="border-2 border-dashed p-4 rounded-xl text-center">
+           <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} required />
+           <p className="text-xs text-gray-400 mt-2">Upload event cover image</p>
+        </div>
+
+        <button disabled={loading} className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all">
+          {loading ? "Creating..." : "Launch Event"}
+        </button>
       </form>
     </div>
   );
