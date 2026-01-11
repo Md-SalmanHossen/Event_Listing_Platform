@@ -3,42 +3,44 @@ import api from "../../library/api/api";
 import toast from "react-hot-toast";
 
 const CreateEvent = () => {
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [location, setLocation] = useState("");
+  const [formData, setFormData] = useState({
+    title: "", description: "", date: "", time: "", 
+    location: "", category: "Music", ticketPrice: "", totalTickets: ""
+  });
   const [image, setImage] = useState(null);
+
+  const handleChange = (e) => setFormData({...formData, [e.target.name]: e.target.value});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("date", date);
-    formData.append("time", time);
-    formData.append("location", location);
-    if (image) formData.append("image", image);
+    const data = new FormData();
+    Object.keys(formData).forEach(key => data.append(key, formData[key]));
+    if (image) data.append("image", image);
 
     try {
-      await api.post("/user/event", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await api.post("/user/event", data, { headers: { "Content-Type": "multipart/form-data" } });
       toast.success("Event created successfully!");
-      setTitle(""); setDate(""); setTime(""); setLocation(""); setImage(null);
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     }
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Create Event</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md">
-        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="input input-bordered" required />
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="input input-bordered" required />
-        <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="input input-bordered" required />
-        <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" className="input input-bordered" required />
-        <input type="file" onChange={(e) => setImage(e.target.files[0])} className="input input-bordered" />
-        <button type="submit" className="btn bg-green-500 hover:bg-green-600 text-white">Create Event</button>
+    <div className="max-w-2xl mx-auto bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+      <h2 className="text-2xl font-black text-gray-800 mb-6">Create New Event</h2>
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input name="title" onChange={handleChange} placeholder="Event Title" className="md:col-span-2 p-3 border rounded-xl" required />
+        <textarea name="description" onChange={handleChange} placeholder="Description" className="md:col-span-2 p-3 border rounded-xl h-24" required />
+        <input name="date" type="date" onChange={handleChange} className="p-3 border rounded-xl" required />
+        <input name="time" type="time" onChange={handleChange} className="p-3 border rounded-xl" required />
+        <input name="location" onChange={handleChange} placeholder="Location" className="p-3 border rounded-xl" required />
+        <select name="category" onChange={handleChange} className="p-3 border rounded-xl">
+          <option>Music</option><option>Sports</option><option>Tech</option><option>Workshop</option>
+        </select>
+        <input name="ticketPrice" type="number" onChange={handleChange} placeholder="Ticket Price ($)" className="p-3 border rounded-xl" required />
+        <input name="totalTickets" type="number" onChange={handleChange} placeholder="Total Tickets" className="p-3 border rounded-xl" required />
+        <input type="file" onChange={(e) => setImage(e.target.files[0])} className="md:col-span-2 p-2 border-2 border-dashed rounded-xl" required />
+        <button type="submit" className="md:col-span-2 bg-indigo-600 text-white py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all">Publish Event</button>
       </form>
     </div>
   );

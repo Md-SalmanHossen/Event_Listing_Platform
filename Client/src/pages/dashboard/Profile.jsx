@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import api from "../../library/api/api";
 import toast from "react-hot-toast";
+import { Camera, User, Mail, ShieldCheck, UploadCloud } from "lucide-react";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -30,77 +32,113 @@ const Profile = () => {
   const handleImageUpload = async () => {
     if (!image) return toast.error("Please select an image first!");
     
+    setUploading(true);
     const formData = new FormData();
-    formData.append("image", image); // Backend-er upload.single('image') er sathe mil rekhe
+    formData.append("image", image);
 
     try {
       const { data } = await api.put("/user/profile", formData);
       toast.success("Profile image updated successfully!");
-      
-      // Backend theke updated user data niye state update korchi
       setUser(data.user); 
       setPreview(null);
       setImage(null);
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
+    } finally {
+      setUploading(false);
     }
   };
 
-  if (!user) return <div className="text-center p-10 font-semibold">Loading Profile...</div>;
+  if (!user) return (
+    <div className="flex justify-center items-center min-h-[400px]">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+    </div>
+  );
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-8 bg-white rounded-3xl shadow-xl border border-gray-100">
-      <h2 className="text-2xl font-black text-gray-800 mb-8 text-center uppercase tracking-tight">My Profile</h2>
-      
-      <div className="flex flex-col items-center mb-8">
-        <div className="relative group">
-          <div className="w-36 h-36 rounded-full overflow-hidden border-4 border-blue-500 shadow-lg mb-4">
-            <img
-              src={preview || user.image || "https://via.placeholder.com/150"}
-              alt="Profile"
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            />
-          </div>
-          {preview && (
-            <div className="absolute top-0 right-0 bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
-              NEW PREVIEW
-            </div>
-          )}
-        </div>
-        
-        <div className="w-full space-y-4">
-          <div className="bg-gray-50 p-4 rounded-xl">
-            <label className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">Full Name</label>
-            <p className="text-lg font-bold text-gray-800">{user.name}</p>
-          </div>
-          
-          <div className="bg-gray-50 p-4 rounded-xl">
-            <label className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">Email Address</label>
-            <p className="text-md font-medium text-gray-600">{user.email}</p>
-          </div>
-        </div>
+    <div className="max-w-4xl mx-auto py-10 px-4">
+      {/* Page Title */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Account Settings</h1>
+        <p className="text-gray-500">Manage your profile information and account security.</p>
       </div>
 
-      <div className="mt-8 pt-6 border-t border-dashed border-gray-200">
-        <label className="block text-sm font-bold text-gray-700 mb-3">Change Profile Photo</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
-        />
-        
-        <button
-          onClick={handleImageUpload}
-          disabled={!image}
-          className={`w-full mt-6 py-3 rounded-2xl font-bold transition-all duration-300 ${
-            image 
-            ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-indigo-200 active:scale-95" 
-            : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
-        >
-          {image ? "Confirm & Save Photo" : "Select Photo to Upload"}
-        </button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Avatar Upload */}
+        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center">
+          <div className="relative group">
+            <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-xl ring-1 ring-gray-100">
+              <img
+                src={preview || user.image || "https://ui-avatars.com/api/?name=" + user.name}
+                alt="Profile"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            </div>
+            
+            <label className="absolute bottom-2 right-2 bg-indigo-600 p-2.5 rounded-full text-white cursor-pointer shadow-lg hover:bg-indigo-700 transition-colors border-2 border-white">
+              <Camera size={20} />
+              <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+            </label>
+          </div>
+
+          <div className="mt-6 text-center">
+            <h3 className="text-lg font-bold text-gray-800">{user.name}</h3>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 mt-1 uppercase tracking-wider">
+              {user.role || 'Member'}
+            </span>
+          </div>
+
+          {image && (
+            <button
+              onClick={handleImageUpload}
+              disabled={uploading}
+              className="mt-6 w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all disabled:opacity-50"
+            >
+              <UploadCloud size={18} />
+              {uploading ? "Uploading..." : "Save Changes"}
+            </button>
+          )}
+        </div>
+
+        {/* Right Column: User Details */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+            <h4 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <User size={20} className="text-indigo-600" /> Personal Information
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Full Name</label>
+                <div className="flex items-center gap-3 bg-gray-50 px-4 py-3.5 rounded-xl border border-transparent focus-within:border-indigo-100 transition-all">
+                  <User size={18} className="text-gray-400" />
+                  <p className="text-gray-800 font-medium">{user.name}</p>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Email Address</label>
+                <div className="flex items-center gap-3 bg-gray-50 px-4 py-3.5 rounded-xl border border-transparent">
+                  <Mail size={18} className="text-gray-400" />
+                  <p className="text-gray-800 font-medium">{user.email}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+            <h4 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <ShieldCheck size={20} className="text-indigo-600" /> Account Security
+            </h4>
+            <div className="flex items-center justify-between p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
+              <div>
+                <p className="text-sm font-bold text-indigo-900">Email Verified</p>
+                <p className="text-xs text-indigo-700">Your account is fully secured with this email.</p>
+              </div>
+              <ShieldCheck className="text-indigo-600" size={24} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

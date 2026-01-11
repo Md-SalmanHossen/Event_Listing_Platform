@@ -33,8 +33,10 @@ const AppRouter = () => {
 
       {/* Dashboard Routes */}
       <Route path="/dashboard" element={<DashboardLayout />}>
+        {/* Default route for /dashboard */}
+        <Route index element={<UserDashboard />} /> 
+        
         {/* User Routes */}
-        <Route path="user" element={<UserDashboard />} />
         <Route path="user/my-tickets" element={<MyTickets />} />
         <Route path="user/profile" element={<Profile />} />
 
