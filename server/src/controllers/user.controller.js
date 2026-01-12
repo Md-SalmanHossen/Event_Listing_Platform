@@ -48,6 +48,13 @@ export const login = async (req, res) => {
       })
     }
 
+    if(user.isBlocked){
+      return res.status(403).json({
+        success:false,
+        message:'Your account is blocked'
+      });
+    }
+
     const comparePass=await user.comparePassword(password);
 
     if (!comparePass) {
