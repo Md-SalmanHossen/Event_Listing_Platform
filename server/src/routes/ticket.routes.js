@@ -8,7 +8,7 @@ router.post('/book', protect, ticket.bookTicket);
 router.get('/my', protect, ticket.getUserTickets);
 
 router.put('/cancel/:id', protect, ticket.cancelTicket);
-router.put('/confirmed/:id', protect, ticket.confirmedTicket);
+router.put('/confirm/:id', protect, ticket.confirmTicket);
 
 
 export default router;
