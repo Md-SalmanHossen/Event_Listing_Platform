@@ -163,7 +163,7 @@ export const updateEvent = async (req, res) => {
       updateData.image=req.file.path;
     }
 
-    const event=await Event.findOneAndDelete(
+    const event=await Event.findOneAndUpdate(
       {_id:id, organizer:req.user.id, isActive:true},
       updateData,
       {new:true, runValidators:true},
