@@ -1,4 +1,4 @@
-import useAuthStore from '../../library/store/store'
+import useAuthStore from '../../library/store/useAuthStore'
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom'
 import { LayoutDashboard, Ticket, User, Calendar, PlusCircle, LogOut, Home } from 'lucide-react';
 

@@ -4,7 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell 
 } from "recharts";
 import { CreditCard, User, Ticket, Activity, Calendar } from "lucide-react";
-import api from "../../library/api/api";
+import api from "../../library/api/axios";
 import toast from "react-hot-toast";
 
 const UserDashboard = () => {

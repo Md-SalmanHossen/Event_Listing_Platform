@@ -1,43 +1,61 @@
-import { Link, useNavigate } from "react-router-dom";
-import useAuthStore from "../library/store/store";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import useAuthStore from "../library/store/useAuthStore";
 import { useState } from "react";
+
+const NavLink = ({ to, children, onClick }) => {
+  const location = useLocation();
+  const active = location.pathname === to;
+
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`px-3 py-2 rounded-lg transition ${
+        active ? "text-green-600 bg-green-50" : "hover:text-green-600 hover:bg-green-50"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+};
 
 const Navbar = () => {
   const { token, logout } = useAuthStore();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
+  const closeMenu = () => setOpen(false);
+
   return (
-    <nav className="w-full bg-white shadow-md relative">
-      <div className="max-w-8xl mx-auto md:px-16 flex items-center justify-between h-16">
-        
+    <nav className="w-full bg-white/90 backdrop-blur border-b border-gray-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 md:px-10 flex items-center justify-between h-16">
         {/* Logo */}
-        <div className="flex-shrink-0">
-          <Link to="/" className="text-2xl font-bold text-green-500">
-            Eventify
-          </Link>
+        <Link to="/" className="text-2xl font-extrabold text-green-600">
+          Eventify
+        </Link>
+
+        {/* Desktop Links */}
+        <div className="hidden md:flex items-center gap-2 font-medium text-gray-700">
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/events">Events</NavLink>
+          <NavLink to="/about">About</NavLink>
+          <NavLink to="/contact">Contact</NavLink>
         </div>
 
-        {/* Center Links (Desktop) */}
-        <div className="hidden md:flex flex-1 justify-center gap-8 font-medium">
-          <Link to="/" className="hover:text-green-500 transition">Home</Link>
-          <Link to="/events" className="hover:text-green-500 transition">Events</Link>
-          <Link to="/contact" className="hover:text-green-500 transition">Contact</Link>
-        </div>
-
-        {/* Right Side Buttons (Desktop) */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* Desktop Right */}
+        <div className="hidden md:flex items-center gap-3">
           {token ? (
             <>
               <Link
                 to="/dashboard"
-                className="text-green-500 font-medium hover:text-green-600 transition"
+                className="px-4 py-2 rounded-lg text-green-600 font-semibold hover:bg-green-50 transition"
               >
                 Dashboard
               </Link>
+
               <button
                 onClick={logout}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-md transition"
+                className="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 active:scale-[0.98] transition"
               >
                 Logout
               </button>
@@ -46,13 +64,13 @@ const Navbar = () => {
             <>
               <button
                 onClick={() => navigate("/login")}
-                className="border border-green-500 text-green-500 px-4 py-1 rounded-md hover:bg-green-50 transition"
+                className="px-4 py-2 rounded-lg border border-green-600 text-green-600 font-semibold hover:bg-green-50 transition"
               >
                 Login
               </button>
               <button
                 onClick={() => navigate("/register")}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-md transition"
+                className="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 active:scale-[0.98] transition"
               >
                 Register
               </button>
@@ -60,58 +78,40 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden">
-          <button
-            onClick={() => setOpen(!open)}
-            className="cursor-pointer text-2xl focus:outline-none"
-          >
-            ☰
-          </button>
-        </div>
+        {/* Mobile button */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="md:hidden px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
+          aria-label="Toggle menu"
+        >
+          ☰
+        </button>
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-white shadow-md absolute w-full left-0 top-16 flex flex-col items-center gap-4 py-4 z-50">
-          <Link
-            to="/"
-            onClick={() => setOpen(false)}
-            className="w-full text-center py-1 hover:text-green-500 transition"
-          >
-            Home
-          </Link>
-          <Link
-            to="/events"
-            onClick={() => setOpen(false)}
-            className="w-full text-center py-1 hover:text-green-500 transition"
-          >
-            Events
-          </Link>
-          <Link
-            to="/contact"
-            onClick={() => setOpen(false)}
-            className="w-full text-center py-1 hover:text-green-500 transition"
-          >
-            Contact
-          </Link>
+        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-2">
+          <NavLink to="/" onClick={closeMenu}>Home</NavLink>
+          <NavLink to="/events" onClick={closeMenu}>Events</NavLink>
+          <NavLink to="/about" onClick={closeMenu}>About</NavLink>
+          <NavLink to="/contact" onClick={closeMenu}>Contact</NavLink>
 
-          <div className="flex flex-col gap-2 mt-2 w-full items-center">
+          <div className="pt-3 border-t border-gray-100 space-y-2">
             {token ? (
               <>
                 <Link
                   to="/dashboard"
-                  onClick={() => setOpen(false)}
-                  className="w-full text-center py-1 text-green-500 hover:text-green-600 transition"
+                  onClick={closeMenu}
+                  className="block px-4 py-2 rounded-lg text-center text-green-600 font-semibold hover:bg-green-50 transition"
                 >
                   Dashboard
                 </Link>
                 <button
                   onClick={() => {
                     logout();
-                    setOpen(false);
+                    closeMenu();
                   }}
-                  className="w-full bg-green-500 text-white py-1 rounded-md hover:bg-green-600 transition"
+                  className="w-full px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
                 >
                   Logout
                 </button>
@@ -121,18 +121,18 @@ const Navbar = () => {
                 <button
                   onClick={() => {
                     navigate("/login");
-                    setOpen(false);
+                    closeMenu();
                   }}
-                  className="w-full border border-green-500 text-green-500 py-1 rounded-md hover:bg-green-50 transition"
+                  className="w-full px-4 py-2 rounded-lg border border-green-600 text-green-600 font-semibold hover:bg-green-50 transition"
                 >
                   Login
                 </button>
                 <button
                   onClick={() => {
                     navigate("/register");
-                    setOpen(false);
+                    closeMenu();
                   }}
-                  className="w-full bg-green-500 text-white py-1 rounded-md hover:bg-green-600 transition"
+                  className="w-full px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
                 >
                   Register
                 </button>

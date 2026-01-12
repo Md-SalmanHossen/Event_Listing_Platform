@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../../library/api/api";
+import api from "../../library/api/axios";
 import toast from "react-hot-toast";
 import { Upload, Calendar, MapPin, DollarSign, Tag } from "lucide-react";
 

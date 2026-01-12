@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../../library/api/api";
+import api from "../../library/api/axios";
 import toast from "react-hot-toast";
 import { Ticket, Calendar, MapPin, Tag, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";

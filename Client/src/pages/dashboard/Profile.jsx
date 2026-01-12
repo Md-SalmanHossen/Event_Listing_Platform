@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../../library/api/api";
+import api from "../../library/api/axios";
 import toast from "react-hot-toast";
 import { Camera, User, Mail, ShieldCheck, UploadCloud } from "lucide-react";
 

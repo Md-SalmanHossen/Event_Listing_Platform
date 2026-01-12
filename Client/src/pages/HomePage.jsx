@@ -6,6 +6,7 @@ import UpcomingEvent from '../components/UpcommingEvent';
 const HomePage = () => {
   return (
     <div>
+      {/* hero section */}
       <EventCard/>
       <UpcomingEvent/>
       <Banner/>

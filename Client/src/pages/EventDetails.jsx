@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../library/api/api";
+import api from "../library/api/axios";
 import toast from "react-hot-toast";
 
 const EventDetails = () => {
