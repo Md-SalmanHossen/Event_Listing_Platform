@@ -9,16 +9,26 @@ const UpcomingEvent = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchUpcomingEvents = async () => {
+    setLoading(true);
     try {
       const { data } = await api.get("/user/event?page=1&limit=6");
 
       const today = new Date();
-      const upcoming = (data.events || []).filter((e) => new Date(e.date) >= today);
+
+      const upcoming = (data?.events || [])
+        .filter((e) => {
+          if (!e?.date) return false;
+          const d = new Date(e.date);
+          if (isNaN(d.getTime())) return false; // invalid date বাদ
+          return d >= today;
+        })
+        .sort((a, b) => new Date(a.date) - new Date(b.date)); // date অনুযায়ী সাজানো
 
       setEvents(upcoming);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to fetch events");
+      const msg = err?.response?.data?.message || "Failed to fetch events";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -32,7 +42,9 @@ const UpcomingEvent = () => {
       await api.post("/user/ticket/book", { eventId });
       toast.success("Ticket booking request submitted!");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Booking failed");
+      console.error(err);
+      const msg = err?.response?.data?.message || "Booking failed";
+      toast.error(msg);
     }
   };
 
@@ -61,7 +73,9 @@ const UpcomingEvent = () => {
       {events.length === 0 ? (
         <div className="text-center py-16 bg-gray-50 rounded-2xl border border-dashed">
           <CalendarDays className="mx-auto text-gray-300 mb-3" size={44} />
-          <p className="text-gray-500 font-semibold">No upcoming events right now.</p>
+          <p className="text-gray-500 font-semibold">
+            No upcoming events right now.
+          </p>
         </div>
       ) : (
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">

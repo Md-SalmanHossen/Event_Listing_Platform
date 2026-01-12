@@ -1,117 +1,152 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import api from "../library/api/axios";
 import toast from "react-hot-toast";
-import { Search, ArrowUpDown, Filter, Loader2, AlertCircle } from "lucide-react";
-import EventCard from "../components/EventCard"; 
+import { Loader2 } from "lucide-react";
 
-const EventListing = () => {
-  const [events, setEvents] = useState([]);
+const EventDetails = () => {
+  const { id } = useParams();
+
+  const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
-  const [filterCategory, setFilterCategory] = useState("All");
+  const [bookingLoading, setBookingLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        // Backend route ta check korun: /user/event/all naki shudhu /user/event
-        const response = await api.get("/user/event/all");
-        
-        console.log("Backend Data:", response.data); // Console e check koren data asche kina
-
-        // Jodi data.events thake tobe seta set hobe, nahole khali array
-        setEvents(response.data.events || response.data || []);
-      } catch (err) {
-        console.error("Fetch Error:", err);
-        toast.error("Could not load events from server");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchEvents();
-  }, []);
-
-  // Filter and Sort Logic with Safety Checks
-  const filteredEvents = (Array.isArray(events) ? events : [])
-    .filter((event) => {
-      if (!event || !event.title) return false; // Bad data skip korbe
-      const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = filterCategory === "All" || event.category === filterCategory;
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a?.date || 0);
-      const dateB = new Date(b?.date || 0);
-      if (sortBy === "newest") return dateB - dateA;
-      if (sortBy === "oldest") return dateA - dateB;
-      return 0;
-    });
-
-  const handleBookTicket = async (eventId) => {
+  const fetchEvent = async () => {
     try {
-      await api.post("/user/ticket/book", { eventId });
-      toast.success("Ticket booked!");
+      setLoading(true);
+      const { data } = await api.get(`/user/event/${id}`);
+      setEvent(data?.event || null);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Booking failed");
+      const msg =
+        typeof err === "string"
+          ? err
+          : err?.response?.data?.message || "Failed to load event";
+      toast.error(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return (
-    <div className="flex justify-center items-center min-h-[60vh]">
-      <Loader2 className="animate-spin text-indigo-600" size={40} />
-    </div>
-  );
+  const handleBookTicket = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return toast.error("Please login to book tickets!");
+
+    try {
+      setBookingLoading(true);
+
+      const { data } = await api.post("/user/ticket/book", { eventId: id });
+
+      toast.success(data?.message || "Ticket booking request submitted!");
+
+      // ✅ safe UI update
+      setEvent((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          availableTickets: Math.max((prev.availableTickets || 0) - 1, 0),
+        };
+      });
+    } catch (err) {
+      const msg =
+        typeof err === "string"
+          ? err
+          : err?.response?.data?.message || "Booking failed";
+      toast.error(msg);
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvent();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader2 className="animate-spin text-green-600" size={40} />
+      </div>
+    );
+  }
+
+  if (!event) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-14 text-center">
+        <h2 className="text-2xl font-bold text-gray-900">Event not found</h2>
+        <p className="text-gray-500 mt-2">The event may be removed or inactive.</p>
+        <Link
+          to="/events"
+          className="inline-block mt-6 px-5 py-2.5 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition"
+        >
+          Back to Events
+        </Link>
+      </div>
+    );
+  }
+
+  const dateText = event?.date ? new Date(event.date).toLocaleDateString() : "TBA";
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
-      {/* Search & Filter Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <h1 className="text-3xl font-black text-gray-900">Explore Events</h1>
-        
-        <div className="flex flex-wrap gap-3">
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            className="p-3 border rounded-2xl outline-none focus:border-indigo-300"
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <select 
-            className="p-3 border rounded-2xl outline-none"
-            onChange={(e) => setFilterCategory(e.target.value)}
-          >
-            <option value="All">All Categories</option>
-            <option value="Music">Music</option>
-            <option value="Tech">Tech</option>
-          </select>
-          <button 
-            onClick={() => setSortBy(sortBy === "newest" ? "oldest" : "newest")}
-            className="bg-indigo-600 text-white px-5 py-3 rounded-2xl font-bold"
-          >
-            {sortBy === "newest" ? "Newest First" : "Oldest First"}
-          </button>
+    <div className="max-w-4xl mx-auto px-4 md:px-6 py-10">
+      <img
+        src={event.image || "https://via.placeholder.com/800x400"}
+        alt={event.title}
+        className="w-full h-80 object-cover rounded-3xl shadow-md"
+        loading="lazy"
+      />
+
+      <div className="mt-6">
+        <span className="inline-block bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-bold">
+          {event.category || "Other"}
+        </span>
+
+        <h1 className="text-3xl md:text-4xl font-extrabold mt-3 text-gray-900">
+          {event.title}
+        </h1>
+
+        <p className="text-gray-500 mt-2">
+          📍 {event.location || "TBA"} &nbsp;|&nbsp; 📅 {dateText} &nbsp;|&nbsp; ⏰{" "}
+          {event.time || "TBA"}
+        </p>
+
+        <div className="mt-6 p-6 bg-gray-50 rounded-2xl border border-dashed">
+          <h3 className="font-bold text-lg">About this event</h3>
+          <p className="mt-2 text-gray-700 leading-relaxed">
+            {event.description || "No description available."}
+          </p>
+        </div>
+
+        <div className="mt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-5 p-6 bg-white border rounded-3xl shadow-sm">
+          <div>
+            <p className="text-gray-500 text-sm">Price per ticket</p>
+            <p className="text-2xl font-extrabold text-green-600">
+              ${event.ticketPrice ?? 0}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              Remaining: {event.availableTickets ?? 0}
+            </p>
+          </div>
+
+          {(event.availableTickets ?? 0) > 0 ? (
+            <button
+              onClick={handleBookTicket}
+              disabled={bookingLoading}
+              className="px-7 py-3 rounded-2xl bg-green-600 hover:bg-green-700 text-white font-bold transition disabled:opacity-60"
+            >
+              {bookingLoading ? "Processing..." : "Book Ticket Now"}
+            </button>
+          ) : (
+            <button
+              disabled
+              className="px-7 py-3 rounded-2xl bg-gray-200 text-gray-500 font-bold cursor-not-allowed"
+            >
+              Sold Out
+            </button>
+          )}
         </div>
       </div>
-
-      {/* Grid Display */}
-      {filteredEvents.length === 0 ? (
-        <div className="text-center py-20 bg-gray-50 rounded-[40px] border border-dashed">
-          <AlertCircle className="mx-auto text-gray-300 mb-4" size={48} />
-          <h3 className="text-lg font-bold text-gray-800">No events found</h3>
-          <p className="text-gray-500 text-sm">Server theke kono data asche na ba filter match korche na.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredEvents.map((event) => (
-            // Ekhane amra check korchi event exist kore kina
-            event && event._id ? (
-              <EventCard key={event._id} event={event} onBook={handleBookTicket} />
-            ) : null
-          ))}
-        </div>
-      )}
     </div>
   );
 };
 
-export default EventListing;
+export default EventDetails;

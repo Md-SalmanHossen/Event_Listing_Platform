@@ -1,17 +1,23 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../library/store/useAuthStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const NavLink = ({ to, children, onClick }) => {
+const NavItem = ({ to, children, onClick }) => {
   const location = useLocation();
-  const active = location.pathname === to;
+
+  // ✅ active also works for nested routes (events/:id etc.)
+  const active = to === "/"
+    ? location.pathname === "/"
+    : location.pathname === to || location.pathname.startsWith(to + "/");
 
   return (
     <Link
       to={to}
       onClick={onClick}
       className={`px-3 py-2 rounded-lg transition ${
-        active ? "text-green-600 bg-green-50" : "hover:text-green-600 hover:bg-green-50"
+        active
+          ? "text-green-700 bg-green-50 font-semibold"
+          : "text-gray-700 hover:text-green-700 hover:bg-green-50"
       }`}
     >
       {children}
@@ -23,8 +29,19 @@ const Navbar = () => {
   const { token, logout } = useAuthStore();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const closeMenu = () => setOpen(false);
+
+  // ✅ route change হলে mobile menu auto close
+  useEffect(() => {
+    closeMenu();
+  }, [location.pathname]);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <nav className="w-full bg-white/90 backdrop-blur border-b border-gray-100 sticky top-0 z-50">
@@ -35,11 +52,11 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-2 font-medium text-gray-700">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/events">Events</NavLink>
-          <NavLink to="/about">About</NavLink>
-          <NavLink to="/contact">Contact</NavLink>
+        <div className="hidden md:flex items-center gap-2">
+          <NavItem to="/">Home</NavItem>
+          <NavItem to="/events">Events</NavItem>
+          <NavItem to="/about">About</NavItem>
+          <NavItem to="/contact">Contact</NavItem>
         </div>
 
         {/* Desktop Right */}
@@ -48,13 +65,13 @@ const Navbar = () => {
             <>
               <Link
                 to="/dashboard"
-                className="px-4 py-2 rounded-lg text-green-600 font-semibold hover:bg-green-50 transition"
+                className="px-4 py-2 rounded-lg text-green-700 font-semibold hover:bg-green-50 transition"
               >
                 Dashboard
               </Link>
 
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 active:scale-[0.98] transition"
               >
                 Logout
@@ -64,7 +81,7 @@ const Navbar = () => {
             <>
               <button
                 onClick={() => navigate("/login")}
-                className="px-4 py-2 rounded-lg border border-green-600 text-green-600 font-semibold hover:bg-green-50 transition"
+                className="px-4 py-2 rounded-lg border border-green-600 text-green-700 font-semibold hover:bg-green-50 transition"
               >
                 Login
               </button>
@@ -80,7 +97,7 @@ const Navbar = () => {
 
         {/* Mobile button */}
         <button
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpen((v) => !v)}
           className="md:hidden px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
           aria-label="Toggle menu"
         >
@@ -91,26 +108,22 @@ const Navbar = () => {
       {/* Mobile menu */}
       {open && (
         <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-2">
-          <NavLink to="/" onClick={closeMenu}>Home</NavLink>
-          <NavLink to="/events" onClick={closeMenu}>Events</NavLink>
-          <NavLink to="/about" onClick={closeMenu}>About</NavLink>
-          <NavLink to="/contact" onClick={closeMenu}>Contact</NavLink>
+          <NavItem to="/" onClick={closeMenu}>Home</NavItem>
+          <NavItem to="/events" onClick={closeMenu}>Events</NavItem>
+          <NavItem to="/about" onClick={closeMenu}>About</NavItem>
+          <NavItem to="/contact" onClick={closeMenu}>Contact</NavItem>
 
           <div className="pt-3 border-t border-gray-100 space-y-2">
             {token ? (
               <>
                 <Link
                   to="/dashboard"
-                  onClick={closeMenu}
-                  className="block px-4 py-2 rounded-lg text-center text-green-600 font-semibold hover:bg-green-50 transition"
+                  className="block px-4 py-2 rounded-lg text-center text-green-700 font-semibold hover:bg-green-50 transition"
                 >
                   Dashboard
                 </Link>
                 <button
-                  onClick={() => {
-                    logout();
-                    closeMenu();
-                  }}
+                  onClick={handleLogout}
                   className="w-full px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
                 >
                   Logout
@@ -119,19 +132,13 @@ const Navbar = () => {
             ) : (
               <>
                 <button
-                  onClick={() => {
-                    navigate("/login");
-                    closeMenu();
-                  }}
-                  className="w-full px-4 py-2 rounded-lg border border-green-600 text-green-600 font-semibold hover:bg-green-50 transition"
+                  onClick={() => navigate("/login")}
+                  className="w-full px-4 py-2 rounded-lg border border-green-600 text-green-700 font-semibold hover:bg-green-50 transition"
                 >
                   Login
                 </button>
                 <button
-                  onClick={() => {
-                    navigate("/register");
-                    closeMenu();
-                  }}
+                  onClick={() => navigate("/register")}
                   className="w-full px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
                 >
                   Register
