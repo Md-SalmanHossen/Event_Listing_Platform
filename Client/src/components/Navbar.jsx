@@ -45,9 +45,9 @@ const Navbar = () => {
 
   return (
     <nav className="w-full bg-white/90 backdrop-blur border-b border-gray-100 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 md:px-10 flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-4 md:px-10 flex items-center justify-between h-16 min-w-0">
         {/* Logo */}
-        <Link to="/" className="text-2xl font-extrabold text-green-600">
+        <Link to="/" className="text-xl sm:text-2xl font-extrabold text-green-600 whitespace-nowrap">
           Eventify
         </Link>
 
@@ -107,47 +107,53 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-2">
-          <NavItem to="/" onClick={closeMenu}>Home</NavItem>
-          <NavItem to="/events" onClick={closeMenu}>Events</NavItem>
-          <NavItem to="/about" onClick={closeMenu}>About</NavItem>
-          <NavItem to="/contact" onClick={closeMenu}>Contact</NavItem>
+  <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4">
+    {/* ✅ links stacked */}
+    <div className="flex flex-col gap-2">
+      <NavItem to="/" onClick={closeMenu}>Home</NavItem>
+      <NavItem to="/events" onClick={closeMenu}>Events</NavItem>
+      <NavItem to="/about" onClick={closeMenu}>About</NavItem>
+      <NavItem to="/contact" onClick={closeMenu}>Contact</NavItem>
+    </div>
 
-          <div className="pt-3 border-t border-gray-100 space-y-2">
-            {token ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  className="block px-4 py-2 rounded-lg text-center text-green-700 font-semibold hover:bg-green-50 transition"
-                >
-                  Dashboard
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="w-full px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => navigate("/login")}
-                  className="w-full px-4 py-2 rounded-lg border border-green-600 text-green-700 font-semibold hover:bg-green-50 transition"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => navigate("/register")}
-                  className="w-full px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
-                >
-                  Register
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+    {/* ✅ auth buttons stacked */}
+    <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-2">
+      {token ? (
+        <>
+          <Link
+            to="/dashboard"
+            className="block px-4 py-2 rounded-lg text-center text-green-700 font-semibold hover:bg-green-50 transition"
+          >
+            Dashboard
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
+          >
+            Logout
+          </button>
+        </>
+      ) : (
+        <>
+          <button
+            onClick={() => navigate("/login")}
+            className="w-full px-4 py-2 rounded-lg border border-green-600 text-green-700 font-semibold hover:bg-green-50 transition"
+          >
+            Login
+          </button>
+          <button
+            onClick={() => navigate("/register")}
+            className="w-full px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
+          >
+            Register
+          </button>
+        </>
       )}
+    </div>
+  </div>
+)}
+
+
     </nav>
   );
 };

@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../library/api/axios";
 import toast from "react-hot-toast";
+import useAuthStore from "../../library/store/useAuthStore";
 import { Camera, User, Mail, ShieldCheck, UploadCloud, Loader2 } from "lucide-react";
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const logout = useAuthStore((s) => s.logout);
+
   const [user, setUser] = useState(null);
 
   // edit name
@@ -28,7 +33,11 @@ const Profile = () => {
         setUser(u);
         setName(u?.name || "");
       } catch (err) {
-        toast.error(err?.response?.data?.message || "Failed to load profile");
+        const msg =
+          typeof err === "string"
+            ? err
+            : err?.response?.data?.message || "Failed to load profile";
+        toast.error(msg);
       } finally {
         setLoading(false);
       }
@@ -53,7 +62,6 @@ const Profile = () => {
       return toast.error("Please select an image file");
     }
 
-    // remove old preview
     if (preview) URL.revokeObjectURL(preview);
 
     setImage(file);
@@ -62,7 +70,6 @@ const Profile = () => {
 
   // ✅ 3) Save profile (name + image same endpoint)
   const handleSaveProfile = async () => {
-    // nothing changed check (optional simple)
     if (!name.trim() && !image) {
       return toast.error("Nothing to update");
     }
@@ -73,12 +80,15 @@ const Profile = () => {
 
     try {
       setSaving(true);
-      const { data } = await api.put("/user/profile", formData);
+
+      const { data } = await api.put("/user/profile", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       toast.success(data?.message || "Profile updated!");
       setUser(data?.user || user);
 
-      // update localStorage user (so navbar/dashboard show updated name/role)
+      // ✅ localStorage user update
       if (data?.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
       }
@@ -88,32 +98,36 @@ const Profile = () => {
       setPreview(null);
       setImage(null);
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Update failed");
+      const msg =
+        typeof err === "string"
+          ? err
+          : err?.response?.data?.message || "Update failed";
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
   };
 
-  // ✅ 4) Become organizer
+  // ✅ 4) Become organizer → logout → login page
   const handleBecomeOrganizer = async () => {
     try {
       setBecoming(true);
+
       const { data } = await api.put("/user/become-organizer");
 
-      toast.success(data?.message || "You are now an organizer!");
+      toast.success(data?.message || "You are now an organizer! Please login again.");
 
-      // role update দেখাতে profile refetch না করেও state update করা যায়
-      setUser((prev) => (prev ? { ...prev, role: "organizer" } : prev));
+      // ✅ IMPORTANT: logout, so new role works everywhere
+      logout();
 
-      // localStorage user update (important)
-      const stored = localStorage.getItem("user");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        parsed.role = "organizer";
-        localStorage.setItem("user", JSON.stringify(parsed));
-      }
+      // ✅ go login
+      navigate("/login", { replace: true });
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to become organizer");
+      const msg =
+        typeof err === "string"
+          ? err
+          : err?.response?.data?.message || "Failed to become organizer";
+      toast.error(msg);
     } finally {
       setBecoming(false);
     }
@@ -138,7 +152,6 @@ const Profile = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-4">
-      {/* Title */}
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900">Profile</h1>
         <p className="text-gray-500">Update your name, photo and role.</p>
@@ -163,7 +176,12 @@ const Profile = () => {
 
             <label className="absolute bottom-2 right-2 bg-green-600 p-2.5 rounded-full text-white cursor-pointer shadow-lg hover:bg-green-700 transition-colors border-2 border-white">
               <Camera size={20} />
-              <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
             </label>
           </div>
 
@@ -174,7 +192,6 @@ const Profile = () => {
             </span>
           </div>
 
-          {/* Become Organizer button */}
           {user.role !== "organizer" && (
             <button
               onClick={handleBecomeOrganizer}
@@ -188,13 +205,11 @@ const Profile = () => {
 
         {/* Right: Details */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Personal Info */}
           <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
             <h4 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
               <User size={20} className="text-green-600" /> Personal Information
             </h4>
 
-            {/* Editable Name */}
             <div className="space-y-2 mb-6">
               <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">
                 Full Name
@@ -207,7 +222,6 @@ const Profile = () => {
               />
             </div>
 
-            {/* Email (read only) */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">
                 Email Address
@@ -218,7 +232,6 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Save Button */}
             <button
               onClick={handleSaveProfile}
               disabled={saving}
@@ -229,7 +242,6 @@ const Profile = () => {
             </button>
           </div>
 
-          {/* Security */}
           <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
             <h4 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
               <ShieldCheck size={20} className="text-green-600" /> Account Security
