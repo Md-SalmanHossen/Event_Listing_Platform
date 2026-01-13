@@ -15,10 +15,23 @@ const useAuthStore = create((set) => ({
   user: getInitialUser(),
   token: localStorage.getItem("token") || null,
 
-  // ✅ NEW: user update helper (role/name/image update হলে কাজে লাগবে)
   setUser: (newUser) => {
     localStorage.setItem("user", JSON.stringify(newUser));
     set({ user: newUser });
+  },
+
+  register: async (name, email, password) => {
+    try {
+      await api.post("/user/register", { name, email, password });
+      return { success: true };
+    } catch (err) {
+      // axios interceptor থাকলে err string হবে
+      const msg =
+        typeof err === "string"
+          ? err
+          : err?.response?.data?.message || err?.message || "Register failed";
+      return { success: false, error: msg };
+    }
   },
 
   login: async (email, password) => {
@@ -29,9 +42,14 @@ const useAuthStore = create((set) => ({
       localStorage.setItem("user", JSON.stringify(data.user));
 
       set({ user: data.user, token: data.token });
-      return true;
-    } catch {
-      return false;
+
+      return { success: true };
+    } catch (err) {
+      const msg =
+        typeof err === "string"
+          ? err
+          : err?.response?.data?.message || err?.message || "Login failed";
+      return { success: false, error: msg };
     }
   },
 

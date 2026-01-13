@@ -4,15 +4,26 @@ const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}/v1`,
 });
 
-// Token automatically add হবে
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+// ✅ public routes (token লাগবে না)
+const PUBLIC_ROUTES = ["/user/login", "/user/register"];
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    const url = config.url || "";
 
-  return config;
-});
+    const isPublic = PUBLIC_ROUTES.some((route) =>
+      url.includes(route)
+    );
+
+    // ✅ শুধু protected route এ token যাবে
+    if (token && !isPublic) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default api;
