@@ -1,10 +1,11 @@
 import Banner from './../components/Banner';
 import UpcomingEvent from '../components/UpcommingEvent';
+import Hero from '../components/Hero';
 
 const HomePage = () => {
   return (
     <div>
-      {/* hero section */}
+      <Hero/>
       <UpcomingEvent/>
       <Banner/>
     </div>
