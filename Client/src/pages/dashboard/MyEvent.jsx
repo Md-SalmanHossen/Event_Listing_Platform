@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../library/api/axios";
 import toast from "react-hot-toast";
-import { Calendar, Tag, MapPin, Plus, Package, Trash2, Loader2 } from "lucide-react";
+import { Calendar, Tag, MapPin, Plus, Package, Trash2, Loader2, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const MyEvents = () => {
@@ -11,11 +11,9 @@ const MyEvents = () => {
 
   const formatDate = (d) => {
     if (!d) return "N/A";
-    try {
-      return new Date(d).toLocaleDateString();
-    } catch {
-      return "N/A";
-    }
+    const dd = new Date(d);
+    if (isNaN(dd.getTime())) return "N/A";
+    return dd.toLocaleDateString();
   };
 
   const fetchEvents = async () => {
@@ -24,11 +22,7 @@ const MyEvents = () => {
       const { data } = await api.get("/user/event/organizer/my-event");
       setEvents(data?.events || []);
     } catch (err) {
-      const msg =
-        typeof err === "string"
-          ? err
-          : err?.response?.data?.message || "Failed to load events";
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Failed to load events");
     } finally {
       setLoading(false);
     }
@@ -49,18 +43,11 @@ const MyEvents = () => {
 
     try {
       setDeletingId(id);
-
-      // ✅ backend delete route: DELETE /v1/user/event/:id
       const { data } = await api.delete(`/user/event/${id}`);
-
       toast.success(data?.message || "Event deleted");
       setEvents((prev) => prev.filter((e) => e._id !== id));
     } catch (err) {
-      const msg =
-        typeof err === "string"
-          ? err
-          : err?.response?.data?.message || "Delete failed";
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Delete failed");
     } finally {
       setDeletingId(null);
     }
@@ -79,9 +66,7 @@ const MyEvents = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-            My Events
-          </h2>
+          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">My Events</h2>
           <p className="text-gray-500">Manage all the events you have organized.</p>
 
           <div className="mt-2 inline-flex bg-green-50 border border-green-100 px-3 py-1 rounded-full text-sm font-bold text-green-700">
@@ -117,12 +102,7 @@ const MyEvents = () => {
               <div className="flex items-center gap-4 flex-1">
                 <div className="w-16 h-16 rounded-xl bg-green-50 overflow-hidden flex items-center justify-center flex-shrink-0">
                   {event.image ? (
-                    <img
-                      src={event.image}
-                      className="w-full h-full object-cover"
-                      alt={event.title}
-                      loading="lazy"
-                    />
+                    <img src={event.image} className="w-full h-full object-cover" alt={event.title} loading="lazy" />
                   ) : (
                     <Calendar className="text-green-700" size={24} />
                   )}
@@ -146,6 +126,14 @@ const MyEvents = () => {
                       <MapPin size={12} /> {event.location || "TBA"}
                     </span>
                   </div>
+
+                  {/* ✅ view details */}
+                  <Link
+                    to={`/events/${event._id}`}
+                    className="inline-flex items-center gap-2 text-sm font-bold text-green-700 mt-3 hover:text-green-800"
+                  >
+                    <ExternalLink size={16} /> View Details
+                  </Link>
                 </div>
               </div>
 
@@ -170,8 +158,15 @@ const MyEvents = () => {
                   disabled={deletingId === event._id}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 transition disabled:opacity-50"
                 >
-                  <Trash2 size={16} />
-                  {deletingId === event._id ? "Deleting..." : "Delete"}
+                  {deletingId === event._id ? (
+                    <>
+                      <Loader2 className="animate-spin" size={16} /> Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 size={16} /> Delete
+                    </>
+                  )}
                 </button>
               </div>
             </div>

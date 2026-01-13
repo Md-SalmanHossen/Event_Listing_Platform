@@ -1,17 +1,48 @@
-import React from "react";
-const Banner = () => {
-   return (
-      <div className='flex flex-col md:flex-row md:items-start items-center justify-between mt-10 px-8 md:pl-14 pt-10 bg-green-500 max-w-7xl mx-3 md:mx-auto rounded-2xl overflow-hidden'>
-      <div className='text-white mb-5'>
-         <h2 className='text-3xl font-medium'>Do you want to check out event host?</h2>
-         <p>Lorem ipsum dolor sit amet consectetur adipisicing.</p>
-         <p className='max-w-130'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem quod nostrum eum corrupti eveniet dignissimos distinctio.</p>
+import { useNavigate } from "react-router-dom";
 
-         <button className='px-6 py-2 bg-white hover:bg-slate-100 transition-all text-primary rounded-lg text-sm mt-4 cursor-pointer'>Events</button>
+const Banner = () => {
+  const navigate = useNavigate();
+
+  return (
+    <section className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white">
+      <div className="max-w-7xl mx-auto px-6 py-20 text-center">
+        {/* Heading */}
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+          Discover & Create Amazing Events
+        </h1>
+
+        {/* Subtitle */}
+        <p className="text-lg md:text-xl text-green-100 max-w-2xl mx-auto mb-10">
+          Join events, book tickets, or become an organizer and host your own
+          events easily.
+        </p>
+
+        {/* Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <button
+            onClick={() => navigate("/events")}
+            className="px-6 py-3 rounded-xl bg-white text-green-700 font-bold hover:bg-green-50 transition"
+          >
+            Explore Events
+          </button>
+
+          <button
+            onClick={() => navigate("/about")}
+            className="px-6 py-3 rounded-xl border-2 border-white font-bold hover:bg-white hover:text-green-700 transition"
+          >
+            About Us
+          </button>
+
+          <button
+            onClick={() => navigate("/contact")}
+            className="px-6 py-3 rounded-xl border-2 border-white font-bold hover:bg-white hover:text-green-700 transition"
+          >
+            Contact Us
+          </button>
+        </div>
       </div>
-      <img src="" alt="event" className='max-h-45 mt-10' />
-    </div>
-   );
+    </section>
+  );
 };
 
 export default Banner;

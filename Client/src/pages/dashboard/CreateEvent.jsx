@@ -239,7 +239,7 @@ const CreateEvent = () => {
 
         <button
           disabled={loading}
-          className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition disabled:opacity-60 flex items-center justify-center gap-2"
+          className="w-full cursor-pointer bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition disabled:opacity-60 flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
