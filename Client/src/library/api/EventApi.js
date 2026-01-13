@@ -1,27 +1,17 @@
 import api from "./axios";
 
-// Public
-export const getAllEvents = () => {
-  return api.get("/user/event");
+export const bookTicket = (data) => {
+  return api.post("/user/ticket/book", data);
 };
 
-export const getSingleEvent = (id) => {
-  return api.get(`/user/event/${id}`);
+export const getMyTickets = () => {
+  return api.get("/user/ticket/my");
 };
 
-// Organizer
-export const createEvent = (formData) => {
-  return api.post("/user/event", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+export const cancelTicket = (id) => {
+  return api.put(`/user/ticket/cancel/${id}`);
 };
 
-export const updateEvent = (id, formData) => {
-  return api.put(`/user/event/${id}`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-};
-
-export const getOrganizerEvents = () => {
-  return api.get("/user/event/organizer/my-event");
+export const confirmTicket = (id) => {
+  return api.put(`/user/ticket/confirm/${id}`);
 };
