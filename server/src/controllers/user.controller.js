@@ -108,35 +108,49 @@ export const getProfile = async (req, res) => {
 
 export const updateProfileImage = async (req, res) => {
   try {
+    const updateData = {};
 
-    if(!req.file){
+    if (req.body.name) {
+      updateData.name = req.body.name;
+    }
+
+    if (req.file) {
+      updateData.image = req.file.path;
+    }
+
+    if (Object.keys(updateData).length === 0) {
       return res.status(400).json({
-        success:false,
-        message:'No image uploaded'
+        success: false,
+        message: "Nothing to update",
       });
     }
-    const imageUrl = req.file.path;
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { image:imageUrl },
+      updateData,
       { new: true }
-    ).select('-password');
+    ).select("-password");
 
-    if(!user){
+    if (!user) {
       return res.status(404).json({
-        success:false,
-        message:'User not found'
-      })
+        success: false,
+        message: "User not found",
+      });
     }
+
     res.status(200).json({
       success: true,
-      user
+      message: "Profile updated successfully",
+      user,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
+
 
 export const roleToOrganizer=async(req, res)=>{
   try {

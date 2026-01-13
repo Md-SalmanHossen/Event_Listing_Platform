@@ -6,25 +6,29 @@ import { Camera, User, Mail, ShieldCheck, UploadCloud, Loader2 } from "lucide-re
 const Profile = () => {
   const [user, setUser] = useState(null);
 
+  // edit name
+  const [name, setName] = useState("");
+
+  // image upload
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
 
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [becoming, setBecoming] = useState(false);
 
-  // ✅ Fetch profile
+  // ✅ 1) Load profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
         const { data } = await api.get("/user/profile");
-        setUser(data?.user || null);
+
+        const u = data?.user || null;
+        setUser(u);
+        setName(u?.name || "");
       } catch (err) {
-        const msg =
-          typeof err === "string"
-            ? err
-            : err?.response?.data?.message || "Failed to load profile";
-        toast.error(msg);
+        toast.error(err?.response?.data?.message || "Failed to load profile");
       } finally {
         setLoading(false);
       }
@@ -33,57 +37,85 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  // ✅ preview cleanup to avoid memory leak
+  // ✅ cleanup preview
   useEffect(() => {
     return () => {
       if (preview) URL.revokeObjectURL(preview);
     };
   }, [preview]);
 
+  // ✅ 2) Pick image
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // basic validation (optional)
     if (!file.type.startsWith("image/")) {
       return toast.error("Please select an image file");
     }
 
-    // clean old preview
+    // remove old preview
     if (preview) URL.revokeObjectURL(preview);
 
     setImage(file);
     setPreview(URL.createObjectURL(file));
   };
 
-  const handleImageUpload = async () => {
-    if (!image) return toast.error("Please select an image first!");
+  // ✅ 3) Save profile (name + image same endpoint)
+  const handleSaveProfile = async () => {
+    // nothing changed check (optional simple)
+    if (!name.trim() && !image) {
+      return toast.error("Nothing to update");
+    }
 
     const formData = new FormData();
-    formData.append("image", image);
+    if (name.trim()) formData.append("name", name.trim());
+    if (image) formData.append("image", image);
 
     try {
-      setUploading(true);
+      setSaving(true);
+      const { data } = await api.put("/user/profile", formData);
 
-      const { data } = await api.put("/user/profile", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      toast.success("Profile image updated successfully!");
+      toast.success(data?.message || "Profile updated!");
       setUser(data?.user || user);
 
-      // reset
+      // update localStorage user (so navbar/dashboard show updated name/role)
+      if (data?.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+
+      // reset image selection
       if (preview) URL.revokeObjectURL(preview);
       setPreview(null);
       setImage(null);
     } catch (err) {
-      const msg =
-        typeof err === "string"
-          ? err
-          : err?.response?.data?.message || "Image upload failed";
-      toast.error(msg);
+      toast.error(err?.response?.data?.message || "Update failed");
     } finally {
-      setUploading(false);
+      setSaving(false);
+    }
+  };
+
+  // ✅ 4) Become organizer
+  const handleBecomeOrganizer = async () => {
+    try {
+      setBecoming(true);
+      const { data } = await api.put("/user/become-organizer");
+
+      toast.success(data?.message || "You are now an organizer!");
+
+      // role update দেখাতে profile refetch না করেও state update করা যায়
+      setUser((prev) => (prev ? { ...prev, role: "organizer" } : prev));
+
+      // localStorage user update (important)
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        parsed.role = "organizer";
+        localStorage.setItem("user", JSON.stringify(parsed));
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to become organizer");
+    } finally {
+      setBecoming(false);
     }
   };
 
@@ -106,16 +138,14 @@ const Profile = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-4">
-      {/* Page Title */}
+      {/* Title */}
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900">Account Settings</h1>
-        <p className="text-gray-500">
-          Manage your profile information and account security.
-        </p>
+        <h1 className="text-3xl font-extrabold text-gray-900">Profile</h1>
+        <p className="text-gray-500">Update your name, photo and role.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Avatar Upload */}
+        {/* Left: Avatar */}
         <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center">
           <div className="relative group">
             <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-xl ring-1 ring-gray-100">
@@ -133,64 +163,73 @@ const Profile = () => {
 
             <label className="absolute bottom-2 right-2 bg-green-600 p-2.5 rounded-full text-white cursor-pointer shadow-lg hover:bg-green-700 transition-colors border-2 border-white">
               <Camera size={20} />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
+              <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
             </label>
           </div>
 
           <div className="mt-6 text-center">
             <h3 className="text-lg font-bold text-gray-800">{user.name}</h3>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 mt-1 uppercase tracking-wider">
-              {user.role || "Member"}
+              {user.role || "member"}
             </span>
           </div>
 
-          {image && (
+          {/* Become Organizer button */}
+          {user.role !== "organizer" && (
             <button
-              onClick={handleImageUpload}
-              disabled={uploading}
-              className="mt-6 w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-green-700 transition disabled:opacity-50"
+              onClick={handleBecomeOrganizer}
+              disabled={becoming}
+              className="mt-6 w-full px-4 py-2.5 rounded-xl bg-gray-900 text-white font-bold hover:bg-black transition disabled:opacity-50"
             >
-              <UploadCloud size={18} />
-              {uploading ? "Uploading..." : "Save Changes"}
+              {becoming ? "Please wait..." : "Become Organizer"}
             </button>
           )}
         </div>
 
-        {/* Details */}
+        {/* Right: Details */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Personal Info */}
           <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
             <h4 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
               <User size={20} className="text-green-600" /> Personal Information
             </h4>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">
-                  Full Name
-                </label>
-                <div className="flex items-center gap-3 bg-gray-50 px-4 py-3.5 rounded-xl border border-transparent">
-                  <User size={18} className="text-gray-400" />
-                  <p className="text-gray-800 font-medium">{user.name}</p>
-                </div>
-              </div>
+            {/* Editable Name */}
+            <div className="space-y-2 mb-6">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">
+                Full Name
+              </label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-400"
+                placeholder="Your name"
+              />
+            </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">
-                  Email Address
-                </label>
-                <div className="flex items-center gap-3 bg-gray-50 px-4 py-3.5 rounded-xl border border-transparent">
-                  <Mail size={18} className="text-gray-400" />
-                  <p className="text-gray-800 font-medium">{user.email}</p>
-                </div>
+            {/* Email (read only) */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">
+                Email Address
+              </label>
+              <div className="flex items-center gap-3 bg-gray-50 px-4 py-3.5 rounded-xl">
+                <Mail size={18} className="text-gray-400" />
+                <p className="text-gray-800 font-medium">{user.email}</p>
               </div>
             </div>
+
+            {/* Save Button */}
+            <button
+              onClick={handleSaveProfile}
+              disabled={saving}
+              className="mt-6 w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition disabled:opacity-50"
+            >
+              <UploadCloud size={18} />
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
           </div>
 
+          {/* Security */}
           <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
             <h4 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
               <ShieldCheck size={20} className="text-green-600" /> Account Security
