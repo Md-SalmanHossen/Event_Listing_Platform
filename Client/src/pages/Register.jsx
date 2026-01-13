@@ -26,7 +26,7 @@ const Register = () => {
       toast.success("Register successful! Please login.");
       navigate("/login");
     } catch (err) {
-      // ✅ works for both string error and axios error
+      //  works for both string error and axios error
       const msg =
         typeof err === "string"
           ? err

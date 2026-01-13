@@ -56,7 +56,7 @@ const MyTickets = () => {
       const { data } = await api.put(`/user/ticket/cancel/${ticketId}`);
       toast.success(data?.message || "Ticket cancelled");
 
-      // ✅ UI update (beginner-friendly)
+      // UI update (beginner-friendly)
       setTickets((prev) =>
         prev.map((t) => (t._id === ticketId ? { ...t, status: "cancelled" } : t))
       );

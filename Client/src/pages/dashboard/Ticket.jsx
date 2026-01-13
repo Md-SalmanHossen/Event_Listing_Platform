@@ -45,7 +45,7 @@ const Tickets = () => {
   }, [tickets, query, status]);
 
   const totalRevenue = useMemo(() => {
-    // ✅ only confirmed tickets contribute revenue
+    //  only confirmed tickets contribute revenue
     return filteredTickets
       .filter((t) => (t?.status || "").toLowerCase() === "confirmed")
       .reduce((sum, t) => sum + (t?.price || 0), 0);

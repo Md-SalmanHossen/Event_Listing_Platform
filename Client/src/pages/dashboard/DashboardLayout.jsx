@@ -18,13 +18,13 @@ const DashboardLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // ✅ mobile sidebar toggle
+  //  mobile sidebar toggle
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // ✅ not logged in → login
+  //  not logged in → login
   if (!token) return <Navigate to="/login" state={{ from: location }} replace />;
 
-  // ✅ sometimes refresh হলে store এ user null হতে পারে — localStorage থেকে তুলে নাও
+  //  sometimes refresh হলে store এ user null হতে পারে — localStorage থেকে তুলে নাও
   useEffect(() => {
     if (!user) {
       const stored = localStorage.getItem("user");
@@ -36,7 +36,7 @@ const DashboardLayout = () => {
     }
   }, [user, setUser]);
 
-  // ✅ still no user
+  //  still no user
   if (!user) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center font-bold text-gray-700">
@@ -63,7 +63,7 @@ const DashboardLayout = () => {
     ];
   }, [user.role]);
 
-  // ✅ active state for nested routes
+  //  active state for nested routes
   const isActive = (path) => {
     if (path === "/dashboard") return location.pathname === "/dashboard";
     return location.pathname.startsWith(path);

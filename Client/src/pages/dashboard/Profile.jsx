@@ -22,7 +22,7 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
   const [becoming, setBecoming] = useState(false);
 
-  // ✅ 1) Load profile
+  //  1) Load profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -46,14 +46,14 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  // ✅ cleanup preview
+  // cleanup preview
   useEffect(() => {
     return () => {
       if (preview) URL.revokeObjectURL(preview);
     };
   }, [preview]);
 
-  // ✅ 2) Pick image
+  //  2) Pick image
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -68,7 +68,7 @@ const Profile = () => {
     setPreview(URL.createObjectURL(file));
   };
 
-  // ✅ 3) Save profile (name + image same endpoint)
+  //  3) Save profile (name + image same endpoint)
   const handleSaveProfile = async () => {
     if (!name.trim() && !image) {
       return toast.error("Nothing to update");
@@ -88,7 +88,7 @@ const Profile = () => {
       toast.success(data?.message || "Profile updated!");
       setUser(data?.user || user);
 
-      // ✅ localStorage user update
+      //  localStorage user update
       if (data?.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
       }
@@ -108,7 +108,7 @@ const Profile = () => {
     }
   };
 
-  // ✅ 4) Become organizer → logout → login page
+  //  4) Become organizer → logout → login page
   const handleBecomeOrganizer = async () => {
     try {
       setBecoming(true);
@@ -117,10 +117,10 @@ const Profile = () => {
 
       toast.success(data?.message || "You are now an organizer! Please login again.");
 
-      // ✅ IMPORTANT: logout, so new role works everywhere
+      //  IMPORTANT: logout, so new role works everywhere
       logout();
 
-      // ✅ go login
+      //  go login
       navigate("/login", { replace: true });
     } catch (err) {
       const msg =

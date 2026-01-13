@@ -24,7 +24,7 @@ const UserDashboard = () => {
       try {
         setLoading(true);
 
-        // ✅ backend dashboard endpoint
+        // backend dashboard endpoint
         const { data } = await api.get("/dashboard/user");
 
         const recentTickets = data?.dashboard?.recentTickets || [];

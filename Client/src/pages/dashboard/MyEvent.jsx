@@ -127,7 +127,7 @@ const MyEvents = () => {
                     </span>
                   </div>
 
-                  {/* ✅ view details */}
+                  {/*  view details */}
                   <Link
                     to={`/events/${event._id}`}
                     className="inline-flex items-center gap-2 text-sm font-bold text-green-700 mt-3 hover:text-green-800"

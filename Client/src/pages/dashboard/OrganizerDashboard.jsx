@@ -22,7 +22,7 @@ const OrganizerDashboard = () => {
       try {
         setLoading(true);
 
-        // ✅ backend route: /v1/dashboard/organizer
+        //  backend route: /v1/dashboard/organizer
         const { data } = await api.get("/dashboard/organizer");
         setDashboard(data?.dashboard || null);
       } catch (err) {
@@ -42,7 +42,7 @@ const OrganizerDashboard = () => {
 
   const chartData = useMemo(() => {
     const recent = dashboard?.recentTickets || [];
-    // ✅ only confirmed tickets chart করলে better (optional)
+    //  only confirmed tickets chart করলে better (optional)
     const confirmed = recent.filter((t) => (t?.status || "").toLowerCase() === "confirmed");
 
     const list = confirmed.length ? confirmed : recent;

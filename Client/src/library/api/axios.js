@@ -4,7 +4,6 @@ const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}/v1`,
 });
 
-// ✅ public routes (token লাগবে না)
 const PUBLIC_ROUTES = ["/user/login", "/user/register"];
 
 api.interceptors.request.use(
@@ -16,7 +15,6 @@ api.interceptors.request.use(
       url.includes(route)
     );
 
-    // ✅ শুধু protected route এ token যাবে
     if (token && !isPublic) {
       config.headers.Authorization = `Bearer ${token}`;
     }

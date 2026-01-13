@@ -94,7 +94,7 @@ const CreateEvent = () => {
       data.append("totalTickets", String(total));
       data.append("image", image);
 
-      // ✅ backend route: POST /v1/user/event
+      //  backend route: POST /v1/user/event
       const res = await api.post("/user/event", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
