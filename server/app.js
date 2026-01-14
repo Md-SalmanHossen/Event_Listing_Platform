@@ -18,16 +18,21 @@ dotenv.config();
 const app=express();
 
 app.use(cors({
-  origin: "http://localhost:5173", 
+  origin: [
+    "http://localhost:5173",
+    "https://event-listing-platform-psi.vercel.app"
+  ],
   credentials: true
 }));
+
+
 app.use(cookieParser());
 
 app.use(express.json({limit:'10mb'}))
 app.use(express.urlencoded({extended:true,limit:'10mb'}));
 
 
-connectDB();
+await connectDB();
 
 app.get("/", (req, res) => {
   res.status(200).json({
