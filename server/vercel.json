@@ -1,17 +1,16 @@
 {
   "version": 2,
   "builds": [
-    { "src": "app.js", "use": "@vercel/node" }
+    {
+      "src": "app.js",
+      "use": "@vercel/node"
+    }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/app.js" }
+    {
+      "src": "/(.*)",
+      "dest": "/app.js"
+    }
   ],
-  "installCommand": "npm install --legacy-peer-deps",
-  "env": {
-    "CLOUDINARY_CLOUD_NAME": "@cloud_name",
-    "CLOUDINARY_API_KEY": "@api_key",
-    "CLOUDINARY_API_SECRET": "@api_secret",
-    "MONGO_URI": "@mongo_uri",
-    "JWT_SECRET": "@jwt_secret"
-  }
+  "installCommand": "npm install --legacy-peer-deps"
 }
