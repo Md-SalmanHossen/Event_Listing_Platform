@@ -19,7 +19,8 @@ const app=express();
 
 app.use(cors({
   origin: [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://event-listing-platform-esla.vercel.app"
   ],
   credentials: true
 }));
