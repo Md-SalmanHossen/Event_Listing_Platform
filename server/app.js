@@ -19,8 +19,7 @@ const app=express();
 
 app.use(cors({
   origin: [
-    "http://localhost:5173",
-    "https://event-listing-platform-psi.vercel.app"
+    "http://localhost:5173"
   ],
   credentials: true
 }));
