@@ -5,6 +5,7 @@ import cors from "cors";
 
 import routeHandler from './src/middlewares/route_handler.middleware.js'
 import connectDB from './src/configs/db.config.js'
+
 import user_router from './src/routes/user.routes.js'
 import event_router from './src/routes/event.routes.js'
 import ticket_router from './src/routes/ticket.routes.js'
@@ -23,10 +24,10 @@ app.use(cors({
 app.use(cookieParser());
 
 app.use(express.json({limit:'10mb'}))
-app.use(express.urlencoded({limit:'10mb',extended:true}));
+app.use(express.urlencoded({extended:true,limit:'10mb'}));
 
 
-await connectDB();
+connectDB();
 
 app.use('/v1/user',user_router);
 app.use('/v1/user/event',event_router);
