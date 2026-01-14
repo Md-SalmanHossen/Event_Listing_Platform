@@ -29,9 +29,17 @@ app.use(express.urlencoded({extended:true,limit:'10mb'}));
 
 connectDB();
 
-app.use('/v1/user',user_router);
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "Success",
+    message: "Backend is ready and running!",
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use('/v1/user/event',event_router);
 app.use('/v1/user/ticket',ticket_router);
+app.use('/v1/user',user_router);
 app.use('/v1/organizer',organizer_router);
 app.use('/v1/dashboard',dashboard_router);
 
